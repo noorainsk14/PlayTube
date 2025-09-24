@@ -33,7 +33,7 @@ const userSchema = new Schema(
 
     avatar: {
       type: String,
-      require: true,
+      required: true,
     },
 
     coverImage: {
@@ -69,7 +69,7 @@ userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
       _id: this._id,
-      emmail: this.email,
+      email: this.email,
       username: this.username,
       fullName: this.fullName,
     },
