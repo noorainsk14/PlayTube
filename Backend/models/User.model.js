@@ -40,6 +40,11 @@ const userSchema = new Schema(
       type: String,
     },
 
+    channel: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Channel",
+    },
+
     refreshToken: {
       type: String,
     },
