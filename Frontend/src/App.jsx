@@ -1,9 +1,19 @@
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
+import Home from "./pages/Home";
+import SignUp from "./pages/SignUp";
+import SignIn from "./pages/SignIn";
+
+export const serverUrl = "http://localhost:8080";
 
 function App() {
   return (
     <>
-      <h1 className="text-2xl text-center mt-10">My react App</h1>
+      <Routes>
+        <Route path="/" element={<Home />}></Route>
+        <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/sign-in" element={<SignIn />} />
+      </Routes>
     </>
   );
 }
