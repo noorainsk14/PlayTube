@@ -35,6 +35,17 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "All fields are required");
   }
 
+  // ✅ Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    throw new ApiError(400, "Invalid email format");
+  }
+
+  // ✅ Validate password length
+  if (password.length < 6) {
+    throw new ApiError(400, "Password must be at least 6 characters long");
+  }
+
   const existedUser = await User.findOne({
     $or: [{ username }, { email }],
   });
@@ -68,7 +79,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const user = await User.create({
     fullName,
     avatar: avatar.url,
-    coverImage: coverImage.url || "",
+    coverImage: coverImage && coverImage.url ? coverImage.url : "",
     email,
     password,
     username: username.toLowerCase(),
