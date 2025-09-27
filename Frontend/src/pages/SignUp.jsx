@@ -106,7 +106,7 @@ const SignUp = () => {
         { withCredentials: true }
       );
       showSuccessToast("SignUp Successfull !");
-      console.log(result);
+
       navigate("/");
       setLoading(false);
     } catch (error) {

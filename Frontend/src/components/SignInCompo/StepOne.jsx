@@ -1,6 +1,6 @@
 import { FaArrowLeft } from "react-icons/fa";
 import { MdKeyboardArrowRight } from "react-icons/md";
-import logo from "/public/play_13955998.png";
+import logo from "../../assets/play_13955998.png";
 import { useNavigate } from "react-router-dom";
 
 const StepOne = ({ identifier, setIdentifier, onNext, step, setStep }) => {

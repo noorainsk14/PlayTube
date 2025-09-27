@@ -76,7 +76,6 @@ const SignIn = () => {
           withCredentials: true,
         }
       );
-      console.log(result.data.data.user);
 
       showSuccessToast("Login successful! ");
       navigate("/");
