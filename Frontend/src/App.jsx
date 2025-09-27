@@ -5,6 +5,7 @@ import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import { Toaster } from "react-hot-toast";
 import ChangePassword from "./pages/ChangePassword";
+import Shorts from "./pages/Shorts/Shorts";
 
 export const serverUrl = "http://localhost:8080";
 
@@ -30,7 +31,9 @@ function App() {
         }}
       />
       <Routes>
-        <Route path="/" element={<Home />}></Route>
+        <Route path="/" element={<Home />}>
+          <Route path="/shorts" element={<Shorts />} />
+        </Route>
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/change-password" element={<ChangePassword />} />

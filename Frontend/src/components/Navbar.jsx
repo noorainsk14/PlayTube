@@ -6,6 +6,7 @@ import { IoIosAddCircle } from "react-icons/io";
 import { GoVideo } from "react-icons/go";
 import { SiYoutubeshorts } from "react-icons/si";
 import { MdOutlineSubscriptions } from "react-icons/md";
+import { Outlet } from "react-router-dom";
 import {
   FaUserCircle,
   FaSearch,
@@ -16,11 +17,33 @@ import {
   FaThumbsUp,
   FaTimes,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [sideBarOpen, setSideBarOpen] = useState(true);
   const [selectedItem, setSelectedItem] = useState("Home");
   const [active, setActive] = useState("Home");
+  const navigate = useNavigate();
+
+  const categories = [
+    "Music",
+    "Gaming",
+    "Movies",
+    "TV Shows",
+    "News",
+    "Trending",
+    "Entertainment",
+    "Education",
+    "Science & Tech",
+    "Travel",
+    "Fashion",
+    "Cooking",
+    "Sports",
+    "Pets",
+    "Art",
+    "Comedy",
+    "Vlogs",
+  ];
   return (
     <>
       {/* {navbar} */}
@@ -131,7 +154,10 @@ const Navbar = () => {
             text={"Shorts"}
             open={sideBarOpen}
             selected={selectedItem === "Shorts"}
-            onClick={() => setSelectedItem("Shorts")}
+            onClick={() => {
+              setSelectedItem("Shorts");
+              navigate("/shorts");
+            }}
           />
           <SideBarItems
             icon={<MdOutlineSubscriptions />}
@@ -212,6 +238,25 @@ const Navbar = () => {
           onClick={() => setActive("You")}
         />
       </nav>
+
+      {/* Main Area */}
+      <main
+        className={`overflow-auto p-4 flex flex-col pb-16 transition-all duration-300 ${
+          sideBarOpen ? "md:ml-60" : "md:ml-20"
+        }`}
+      >
+        <div className="flex items-center gap-3 overflow-x-auto whitespace-nowrap pt-2 mt-[60px] mb-9 custom-scrollbar pb-2 ">
+          {categories.map((cat, idx) => (
+            <button
+              key={idx}
+              className="bg-[#272727] px-4 py-1 rounded-lg text-sm hover:bg-gray-700 whitespace-nowrap hover:cursor-pointer"
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+        <div className="mt-2">{Outlet}</div>
+      </main>
     </>
   );
 };

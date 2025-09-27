@@ -6,3 +6,32 @@
 * {
   font-family: "Roboto", sans-serif;
 }
+
+.custom-scrollbar {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: transparent transparent; /* track & thumb transparent by default */
+  -webkit-overflow-scrolling: touch;
+  transition: scrollbar-color 0.3s ease;
+}
+
+/* Webkit browsers */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 1px; /* super thin scrollbar track */
+  background: transparent; /* invisible track */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: transparent; /* hidden by default */
+  border-radius: 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Show scrollbar thumb and color on hover */
+.custom-scrollbar:hover {
+  scrollbar-color: #272727 transparent; /* Firefox thumb color on hover */
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: #272727; /* visible thumb on hover */
+}
