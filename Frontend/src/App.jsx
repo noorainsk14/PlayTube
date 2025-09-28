@@ -11,10 +11,12 @@ import Playlist from "./pages/Playlist/Playlist";
 import SaveVideos from "./pages/SaveVideos/SaveVideos";
 import LikeVideos from "./pages/LikeVideos/LikeVideos";
 import History from "./pages/History/History";
+import GetCurrentUser from "./customHooks/GetCurrentUser";
 
 export const serverUrl = "http://localhost:8080";
 
 function App() {
+  GetCurrentUser();
   return (
     <>
       <Toaster
