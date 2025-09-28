@@ -48,7 +48,7 @@ const Home = () => {
   return (
     <div className="bg-[#0f0f0f] text-white min-h-screen relative">
       {/* {navbar} */}
-      <header className="bg-[#0f0f0f] h-15 p-3 pb-4  border-b border-gray-800 fixed top-0 left-0 right-0 z-50">
+      <header className="bg-[#0f0f0f] h-15 p-2 border-b border-gray-800 fixed top-0 left-0 right-0 z-50">
         <div className="flex items-center justify-between">
           {/* {left} */}
           <div className="flex items-center gap-4 px-0 py-0">
@@ -80,18 +80,18 @@ const Home = () => {
           </div>
 
           {/* {search} */}
-          <div className="hidden md:flex items-center gap-2 flex-1 max-w-xl">
+          <div className="hidden md:flex items-center gap-2 flex-1 max-w-xl ">
             <div className="flex flex-1">
               <input
                 type="text"
                 className="flex-1 bg-[#1b1b1b] px-4 py-2 rounded-l-full outline-none border border-gray-700"
                 placeholder="Search"
               />
-              <button className="bg-[#272727] px-4 rounded-r-full border border-gray-700">
+              <button className="bg-[#272727] px-4 rounded-r-full border border-gray-700 hover:cursor-pointer text-gray-400 hover:text-white ">
                 <FaSearch />
               </button>
             </div>
-            <button className="bg-[#272727] p-3 rounded-full">
+            <button className="bg-[#272727] p-3 rounded-full hover:cursor-pointer   text-gray-400 hover:text-white">
               <FaMicrophone />
             </button>
           </div>
@@ -99,9 +99,9 @@ const Home = () => {
           {/* {rigth} */}
 
           <div className="flex items-center gap-3">
-            <button className="hidden md:flex items-center gap-1 bg-gray-[#272727] px-3 py-1 border border-gray-700 rounded-full hover:cursor-pointer">
+            <button className="hidden md:flex items-center gap-1 bg-gray-[#272727] px-3 py-1 border border-gray-700 rounded-full hover:cursor-pointer text-gray-400 hover:text-white">
               <span className="text-lg">+</span>
-              <span className="text-white">Create</span>
+              <span>Create</span>
             </button>
             <div className=" hidden md:dropdown dropdown-end">
               <div
@@ -148,7 +148,10 @@ const Home = () => {
             text={"Home"}
             open={sideBarOpen}
             selected={selectedItem === "Home"}
-            onClick={() => setSelectedItem("Home")}
+            onClick={() => {
+              setSelectedItem("Home");
+              navigate("/");
+            }}
           />
           <SideBarItems
             icon={<SiYoutubeshorts />}
@@ -165,7 +168,10 @@ const Home = () => {
             text={"Subscriptions"}
             open={sideBarOpen}
             selected={selectedItem === "Subscriptions"}
-            onClick={() => setSelectedItem("Subscriptions")}
+            onClick={() => {
+              setSelectedItem("Subscriptions");
+              navigate("/subscriptions");
+            }}
           />
         </nav>
         <hr className="border-gray-800 my-3" />
@@ -176,28 +182,40 @@ const Home = () => {
             text={"History"}
             open={sideBarOpen}
             selected={selectedItem === "History"}
-            onClick={() => setSelectedItem("History")}
+            onClick={() => {
+              setSelectedItem("History");
+              navigate("/history");
+            }}
           />
           <SideBarItems
             icon={<FaList />}
             text={"Playlist"}
             open={sideBarOpen}
             selected={selectedItem === "Playlist"}
-            onClick={() => setSelectedItem("Playlist")}
+            onClick={() => {
+              setSelectedItem("Playlist");
+              navigate("/playlist");
+            }}
           />
           <SideBarItems
             icon={<GoVideo />}
             text={"Save Videos"}
             open={sideBarOpen}
             selected={selectedItem === "Save Videos"}
-            onClick={() => setSelectedItem("Save Videos")}
+            onClick={() => {
+              setSelectedItem("Save Videos");
+              navigate("/save-videos");
+            }}
           />
           <SideBarItems
             icon={<FaThumbsUp />}
             text={"Like Videos"}
             open={sideBarOpen}
             selected={selectedItem === "Like Videos"}
-            onClick={() => setSelectedItem("Like Videos")}
+            onClick={() => {
+              setSelectedItem("Like Videos");
+              navigate("like-videos");
+            }}
           />
         </nav>
         <hr className="border-gray-800 my-3" />

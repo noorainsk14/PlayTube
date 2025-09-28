@@ -6,6 +6,11 @@ import SignIn from "./pages/SignIn";
 import { Toaster } from "react-hot-toast";
 import ChangePassword from "./pages/ChangePassword";
 import Shorts from "./pages/Shorts/Shorts";
+import Subscriptions from "./pages/Subscriptions/Subscriptions";
+import Playlist from "./pages/Playlist/Playlist";
+import SaveVideos from "./pages/SaveVideos/SaveVideos";
+import LikeVideos from "./pages/LikeVideos/LikeVideos";
+import History from "./pages/History/History";
 
 export const serverUrl = "http://localhost:8080";
 
@@ -33,6 +38,11 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />}>
           <Route path="/shorts" element={<Shorts />} />
+          <Route path="/subscriptions" element={<Subscriptions />} />
+          <Route path="/history" element={<History />} />
+          <Route path="/playlist" element={<Playlist />} />
+          <Route path="/save-videos" element={<SaveVideos />} />
+          <Route path="/like-videos" element={<LikeVideos />} />
         </Route>
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<SignIn />} />
