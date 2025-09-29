@@ -5,8 +5,15 @@ import { useState } from "react";
 import { IoIosAddCircle } from "react-icons/io";
 import { GoVideo } from "react-icons/go";
 import { SiYoutubeshorts } from "react-icons/si";
-import { MdOutlineSubscriptions } from "react-icons/md";
+import { MdOutlineSubscriptions, MdOutlineSwitchAccount } from "react-icons/md";
+import { SiYoutubestudio } from "react-icons/si";
+import { FcGoogle } from "react-icons/fc";
+import { TiUserAddOutline } from "react-icons/ti";
+import { FiLogOut } from "react-icons/fi";
+import { IoSettingsSharp } from "react-icons/io5";
 import { Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { setUserData } from "../redux/userSlice";
 import {
   FaUserCircle,
   FaSearch,
@@ -25,6 +32,7 @@ const Home = () => {
   const [selectedItem, setSelectedItem] = useState("Home");
   const [active, setActive] = useState("Home");
   const navigate = useNavigate();
+  const { userData } = useSelector((state) => state.user);
 
   const categories = [
     "Music",
@@ -99,10 +107,12 @@ const Home = () => {
           {/* {rigth} */}
 
           <div className="flex items-center gap-3">
-            <button className="hidden md:flex items-center gap-1 bg-gray-[#272727] px-3 py-1 border border-gray-700 rounded-full hover:cursor-pointer text-gray-400 hover:text-white">
-              <span className="text-lg">+</span>
-              <span>Create</span>
-            </button>
+            {userData?.channel && (
+              <button className="hidden md:flex items-center gap-1 bg-gray-[#272727] px-3 py-1 border border-gray-700 rounded-full hover:cursor-pointer text-gray-400 hover:text-white">
+                <span className="text-lg">+</span>
+                <span>Create</span>
+              </button>
+            )}
             <div className=" hidden md:dropdown dropdown-end">
               <div
                 tabIndex={0}
@@ -110,24 +120,85 @@ const Home = () => {
                 className="btn btn-ghost btn-circle avatar"
               >
                 <div className="w-10 rounded-full">
-                  <FaUserCircle className="w-full h-full" />
+                  {!userData?.avatar ? (
+                    <FaUserCircle className="w-full h-full" />
+                  ) : (
+                    <img
+                      src={userData.avatar}
+                      className="  border-gray-700   "
+                    />
+                  )}
                 </div>
               </div>
               <ul
                 tabIndex={0}
-                className=" text-black menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+                className=" text-black menu menu-sm dropdown-content bg-gray-200 rounded-box z-1 mt-3 w-52 p-2 shadow"
               >
                 <li>
-                  <button className="justify-between">
+                  <div className="flex items-center gap-3 p-4 border-b border-gray-700">
+                    <img
+                      src={userData?.avatar}
+                      alt="profileImage"
+                      className="w-12 h-12 flex items-center justify-center rounded-full object-cover border-1 border-gray-700"
+                    />
+                    <div>
+                      <h3 className="font-semibold text-black">
+                        {`@${userData?.username}`}
+                      </h3>
+                      <p className="text-sm text-gray-700">{userData?.email}</p>
+                      <p className="text-sm text-blue-700 cursor-pointer hover:underline">
+                        {userData?.channel ? "view channel" : "create channel"}
+                      </p>
+                    </div>
+                  </div>
+                  {/* <button className="justify-between">
                     Profile
                     <span className="badge bg-gray-200">New</span>
+                  </button> */}
+                </li>
+                <li>
+                  <button>
+                    <FcGoogle size={20} className="w-5" />
+                    SignIn with Google
                   </button>
                 </li>
                 <li>
-                  <button>Settings</button>
+                  <button>
+                    <TiUserAddOutline size={20} className="w-5" />
+                    Create new Account
+                  </button>
                 </li>
                 <li>
-                  <button>Logout</button>
+                  <button>
+                    <MdOutlineSwitchAccount size={20} className="w-5" />
+                    SignIn with other account
+                  </button>
+                </li>
+                {userData.channel && (
+                  <li>
+                    <button>
+                      <SiYoutubestudio
+                        size={20}
+                        className="w-5 text-orange-500"
+                      />
+                      PT Studio
+                    </button>
+                  </li>
+                )}
+
+                {userData && (
+                  <li>
+                    <button>
+                      <FiLogOut size={20} className="w-5" />
+                      SignOut
+                    </button>
+                  </li>
+                )}
+                <li>
+                  <button>
+                    <IoSettingsSharp size={20} className="w-5" />
+                    Settings
+                  </button>
                 </li>
               </ul>
             </div>
@@ -251,7 +322,16 @@ const Home = () => {
           onClick={() => setActive("Subscriptions")}
         />
         <MobileSizeNav
-          icon={<FaUserCircle />}
+          icon={
+            !userData?.avatar ? (
+              <FaUserCircle />
+            ) : (
+              <img
+                src={userData?.avatar}
+                className="w-8 h-8 rounded-full object-cover border border-gray-700"
+              />
+            )
+          }
           text={"You"}
           active={active === "You"}
           onClick={() => setActive("You")}

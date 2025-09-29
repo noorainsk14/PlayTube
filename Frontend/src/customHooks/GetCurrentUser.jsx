@@ -13,8 +13,8 @@ const GetCurrentUser = () => {
           `${serverUrl}/api/v1/users/current-user`,
           { withCredentials: true }
         );
-        dispatch(setUserData(result.data));
-        console.log(result.data);
+        dispatch(setUserData(result.data.data));
+        console.log(result.data.data);
       } catch (error) {
         console.log(error);
         dispatch(setUserData(null));
