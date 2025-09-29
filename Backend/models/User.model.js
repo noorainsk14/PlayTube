@@ -23,7 +23,6 @@ const userSchema = new Schema(
 
     password: {
       type: String,
-      required: [true, "Password is required"],
     },
 
     fullName: {
@@ -66,9 +65,10 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 };
 
 userSchema.methods.generateAccessToken = function () {
+  console.log("Generating token for user:", this._id);
   return jwt.sign(
     {
-      _id: this._id,
+      _id: this._id.toString(),
       email: this.email,
       username: this.username,
       fullName: this.fullName,
@@ -83,7 +83,7 @@ userSchema.methods.generateAccessToken = function () {
 userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
-      _id: this._id,
+      _id: this._id.toString(),
     },
     process.env.REFRESH_TOKEN_SECRET,
     {

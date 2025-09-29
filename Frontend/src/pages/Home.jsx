@@ -30,6 +30,8 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import { serverUrl } from "../App";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "../../utils/firebase.js";
 
 const Home = () => {
   const [sideBarOpen, setSideBarOpen] = useState(true);
@@ -77,6 +79,42 @@ const Home = () => {
       showErrorToast("SignOut Failed !");
     }
   };
+
+  const handleGoogleAuth = async () => {
+    try {
+      const response = await signInWithPopup(auth, provider);
+      console.log(response);
+
+      const user = response.user;
+
+      const idToken = await user.getIdToken();
+      const username = user.displayName.replace(/\s+/g, "").toLowerCase(); // clean username
+      const fullName = user.displayName;
+      const email = user.email;
+      const avatar = user.photoURL;
+
+      const result = await axios.post(
+        `${serverUrl}/api/v1/users/google-auth`,
+        {
+          username,
+          fullName,
+          email,
+          avatar,
+          idToken,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      dispatch(setUserData(result.data));
+      showSuccessToast("Google Authentication Successfully!!");
+    } catch (error) {
+      console.log(error);
+      showErrorToast("Google Authentication Failed!!");
+    }
+  };
+
   return (
     <div className="bg-[#0f0f0f] text-white min-h-screen relative">
       {/* {navbar} */}
@@ -183,7 +221,7 @@ const Home = () => {
                   )}
                 </li>
                 <li>
-                  <button>
+                  <button onClick={handleGoogleAuth}>
                     <FcGoogle size={20} className="w-5" />
                     SignIn with Google
                   </button>

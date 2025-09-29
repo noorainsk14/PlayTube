@@ -5,22 +5,22 @@ import { User } from "../models/User.model.js";
 import { uploadOnCloudinary } from "../config/cloudinary.js";
 import jwt from "jsonwebtoken";
 
+// Helper to generate tokens with proper _id string and save refreshToken
 const generateAccessTokenAndRefreshToken = async (userId) => {
-  try {
-    const user = await User.findById(userId);
-    const accessToken = user.generateAccessToken();
-    const refreshToken = user.generateRefreshToken();
-
-    user.refreshToken = refreshToken;
-    await user.save({ validateBeforeSave: false });
-
-    return { accessToken, refreshToken };
-  } catch (error) {
-    throw new ApiError(
-      505,
-      "Something went wrong while generating the access token and refresh token"
-    );
+  console.log("generateAccessTokenAndRefreshToken called with userId:", userId);
+  const user = await User.findById(userId);
+  if (!user) {
+    console.log("User not found for ID:", userId);
+    throw new ApiError(404, "User not found during token generation");
   }
+  const accessToken = user.generateAccessToken();
+  const refreshToken = user.generateRefreshToken();
+
+  user.refreshToken = refreshToken;
+  await user.save({ validateBeforeSave: false });
+
+  console.log("Tokens generated for user:", user._id);
+  return { accessToken, refreshToken };
 };
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -252,6 +252,80 @@ const currentUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "User fetch successfully !"));
 });
 
+const googleAuth = asyncHandler(async (req, res) => {
+  const { username, email, avatar, fullName } = req.body;
+
+  if (!email || !username || !avatar || !fullName) {
+    return res.status(400).json({
+      success: false,
+      message: "Missing required fields for Google auth.",
+    });
+  }
+
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+  };
+
+  res.clearCookie("accessToken", options);
+  res.clearCookie("refreshToken", options);
+
+  let cloudinaryUrl = avatar;
+
+  if (avatar && !avatar.startsWith("http")) {
+    try {
+      const uploaded = await uploadOnCloudinary(avatar);
+      if (uploaded && uploaded.secure_url) {
+        cloudinaryUrl = uploaded.secure_url;
+      }
+    } catch (error) {
+      console.log(" Cloudinary upload failed:", error.message);
+    }
+  }
+
+  let user = await User.findOne({ email });
+
+  if (!user) {
+    user = await User.create({
+      username,
+      email,
+      fullName,
+      avatar: cloudinaryUrl,
+    });
+  } else {
+    if (!user.avatar && cloudinaryUrl) {
+      user.avatar = cloudinaryUrl;
+      await user.save({ validateBeforeSave: false });
+    }
+  }
+
+  const { accessToken, refreshToken } =
+    await generateAccessTokenAndRefreshToken(user._id);
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new ApiResponse(
+        200,
+        {
+          user: {
+            _id: user._id,
+            email: user.email,
+            username: user.username,
+            fullName: user.fullName,
+            avatar: user.avatar,
+          },
+          accessToken,
+          refreshToken,
+        },
+        "Google Authentication successful!"
+      )
+    );
+});
+
 export {
   registerUser,
   logIn,
@@ -259,4 +333,5 @@ export {
   refreshAccessToken,
   changeCurrentPassword,
   currentUser,
+  googleAuth,
 };
