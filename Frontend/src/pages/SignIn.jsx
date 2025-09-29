@@ -6,6 +6,8 @@ import { showErrorToast, showSuccessToast } from "../helper/toastHelper";
 import { isValidPassword } from "../helper/validation";
 import StepOne from "../components/SignInCompo/StepOne";
 import StepTwo from "../components/SignInCompo/StepTwo";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../redux/userSlice";
 
 const SignIn = () => {
   const [step, setStep] = useState(1);
@@ -14,6 +16,7 @@ const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
   const isEmail = (value) => /\S+@\S+\.\S+/.test(value);
@@ -76,7 +79,9 @@ const SignIn = () => {
           withCredentials: true,
         }
       );
+      console.log(result.data.data);
 
+      dispatch(setUserData(result.data.data));
       showSuccessToast("Login successful! ");
       navigate("/");
     } catch (err) {

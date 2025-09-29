@@ -7,6 +7,8 @@ import { isValidEmail, isValidPassword } from "../helper/validation";
 import StepOne from "../components/SignUpCompo/StepOne";
 import StepTwo from "../components/SignUpCompo/StepTwo";
 import StepThree from "../components/SignUpCompo/StepThree";
+import { useDispatch } from "react-redux";
+import { setUserData } from "../redux/userSlice";
 
 const SignUp = () => {
   const [step, setStep] = useState(1);
@@ -22,6 +24,7 @@ const SignUp = () => {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleNext = () => {
     setErrorMsg("");
@@ -105,6 +108,9 @@ const SignUp = () => {
         formData,
         { withCredentials: true }
       );
+      console.log(result.data.data);
+      dispatch(setUserData(result.data.data));
+
       showSuccessToast("SignUp Successfull !");
 
       navigate("/");

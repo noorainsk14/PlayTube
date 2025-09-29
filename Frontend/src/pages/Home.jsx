@@ -11,9 +11,11 @@ import { FcGoogle } from "react-icons/fc";
 import { TiUserAddOutline } from "react-icons/ti";
 import { FiLogOut } from "react-icons/fi";
 import { IoSettingsSharp } from "react-icons/io5";
-import { Outlet } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Outlet, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { FiLogIn } from "react-icons/fi";
 import { setUserData } from "../redux/userSlice";
+import { showErrorToast, showSuccessToast } from "../helper/toastHelper";
 import {
   FaUserCircle,
   FaSearch,
@@ -26,6 +28,8 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import axios from "axios";
+import { serverUrl } from "../App";
 
 const Home = () => {
   const [sideBarOpen, setSideBarOpen] = useState(true);
@@ -33,6 +37,8 @@ const Home = () => {
   const [active, setActive] = useState("Home");
   const navigate = useNavigate();
   const { userData } = useSelector((state) => state.user);
+  const location = useLocation();
+  const dispatch = useDispatch();
 
   const categories = [
     "Music",
@@ -53,6 +59,24 @@ const Home = () => {
     "Comedy",
     "Vlogs",
   ];
+
+  const handleSignOut = async () => {
+    try {
+      const signOut = await axios.post(
+        `${serverUrl}/api/v1/users/logout`,
+        null,
+        {
+          withCredentials: true,
+        }
+      );
+      dispatch(setUserData(null));
+      console.log(signOut);
+      showSuccessToast("SignOut Successfull !");
+    } catch (error) {
+      console.log(error);
+      showErrorToast("SignOut Failed !");
+    }
+  };
   return (
     <div className="bg-[#0f0f0f] text-white min-h-screen relative">
       {/* {navbar} */}
@@ -135,26 +159,28 @@ const Home = () => {
                 className=" text-black menu menu-sm dropdown-content bg-gray-200 rounded-box z-1 mt-3 w-52 p-2 shadow"
               >
                 <li>
-                  <div className="flex items-center gap-3 p-4 border-b border-gray-700">
-                    <img
-                      src={userData?.avatar}
-                      alt="profileImage"
-                      className="w-12 h-12 flex items-center justify-center rounded-full object-cover border-1 border-gray-700"
-                    />
-                    <div>
-                      <h3 className="font-semibold text-black">
-                        {`@${userData?.username}`}
-                      </h3>
-                      <p className="text-sm text-gray-700">{userData?.email}</p>
-                      <p className="text-sm text-blue-700 cursor-pointer hover:underline">
-                        {userData?.channel ? "view channel" : "create channel"}
-                      </p>
+                  {userData && (
+                    <div className="flex items-center gap-3 p-4 border-b border-gray-700">
+                      <img
+                        src={userData?.avatar}
+                        alt="profileImage"
+                        className="w-12 h-12 flex items-center justify-center rounded-full object-cover border-1 border-gray-700"
+                      />
+                      <div>
+                        <h3 className="font-semibold text-black">
+                          {`@${userData?.username}`}
+                        </h3>
+                        <p className="text-sm text-gray-700">
+                          {userData?.email}
+                        </p>
+                        <p className="text-sm text-blue-700 cursor-pointer hover:underline">
+                          {userData?.channel
+                            ? "view channel"
+                            : "create channel"}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  {/* <button className="justify-between">
-                    Profile
-                    <span className="badge bg-gray-200">New</span>
-                  </button> */}
+                  )}
                 </li>
                 <li>
                   <button>
@@ -162,19 +188,38 @@ const Home = () => {
                     SignIn with Google
                   </button>
                 </li>
+                {!userData && (
+                  <li>
+                    <button
+                      onClick={() => {
+                        navigate("/sign-in");
+                      }}
+                    >
+                      <FiLogIn size={20} className="w-5" />
+                      SignIn with Email
+                    </button>
+                  </li>
+                )}
                 <li>
-                  <button>
+                  <button
+                    onClick={() => {
+                      navigate("/sign-up");
+                    }}
+                  >
                     <TiUserAddOutline size={20} className="w-5" />
                     Create new Account
                   </button>
                 </li>
-                <li>
-                  <button>
-                    <MdOutlineSwitchAccount size={20} className="w-5" />
-                    SignIn with other account
-                  </button>
-                </li>
-                {userData.channel && (
+
+                {userData && (
+                  <li>
+                    <button>
+                      <MdOutlineSwitchAccount size={20} className="w-5" />
+                      SignIn with other account
+                    </button>
+                  </li>
+                )}
+                {userData?.channel && (
                   <li>
                     <button>
                       <SiYoutubestudio
@@ -188,7 +233,7 @@ const Home = () => {
 
                 {userData && (
                   <li>
-                    <button>
+                    <button onClick={handleSignOut}>
                       <FiLogOut size={20} className="w-5" />
                       SignOut
                     </button>
