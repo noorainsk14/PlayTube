@@ -12,6 +12,7 @@ import SaveVideos from "./pages/SaveVideos/SaveVideos";
 import LikeVideos from "./pages/LikeVideos/LikeVideos";
 import History from "./pages/History/History";
 import GetCurrentUser from "./customHooks/GetCurrentUser";
+import MobileProfile from "./components/MobileProfile";
 
 export const serverUrl = "http://localhost:8080";
 
@@ -45,6 +46,7 @@ function App() {
           <Route path="/playlist" element={<Playlist />} />
           <Route path="/save-videos" element={<SaveVideos />} />
           <Route path="/like-videos" element={<LikeVideos />} />
+          <Route path="/mobile-profile" element={<MobileProfile />} />
         </Route>
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<SignIn />} />
