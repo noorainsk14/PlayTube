@@ -251,7 +251,7 @@ const Home = () => {
 
                 {userData && (
                   <li>
-                    <button>
+                    <button onClick={() => navigate("/sign-in")}>
                       <MdOutlineSwitchAccount size={20} className="w-5" />
                       SignIn with other account
                     </button>

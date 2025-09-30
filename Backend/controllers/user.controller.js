@@ -5,12 +5,11 @@ import { User } from "../models/User.model.js";
 import { uploadOnCloudinary } from "../config/cloudinary.js";
 import jwt from "jsonwebtoken";
 
-// Helper to generate tokens with proper _id string and save refreshToken
 const generateAccessTokenAndRefreshToken = async (userId) => {
-  console.log("generateAccessTokenAndRefreshToken called with userId:", userId);
+  //console.log("generateAccessTokenAndRefreshToken called with userId:", userId);
   const user = await User.findById(userId);
   if (!user) {
-    console.log("User not found for ID:", userId);
+    //console.log("User not found for ID:", userId);
     throw new ApiError(404, "User not found during token generation");
   }
   const accessToken = user.generateAccessToken();
@@ -19,13 +18,22 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
   user.refreshToken = refreshToken;
   await user.save({ validateBeforeSave: false });
 
-  console.log("Tokens generated for user:", user._id);
+  // console.log("Tokens generated for user:", user._id);
   return { accessToken, refreshToken };
 };
 
 const registerUser = asyncHandler(async (req, res) => {
   const { fullName, email, username, password } = req.body;
-  console.log("email :", email);
+  //console.log("email :", email);
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    throw new ApiError(400, "Invalid email format");
+  }
+
+  if (password.length < 6) {
+    throw new ApiError(400, "Password must be at least 6 characters long");
+  }
 
   if (
     [fullName, email, username, password].some(
@@ -33,17 +41,6 @@ const registerUser = asyncHandler(async (req, res) => {
     )
   ) {
     throw new ApiError(400, "All fields are required");
-  }
-
-  // ✅ Validate email format
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    throw new ApiError(400, "Invalid email format");
-  }
-
-  // ✅ Validate password length
-  if (password.length < 6) {
-    throw new ApiError(400, "Password must be at least 6 characters long");
   }
 
   const existedUser = await User.findOne({

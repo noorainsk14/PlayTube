@@ -113,7 +113,7 @@ const SignUp = () => {
 
       showSuccessToast("SignUp Successfull !");
 
-      navigate("/");
+      navigate("sign-in");
       setLoading(false);
     } catch (error) {
       console.log(error);
