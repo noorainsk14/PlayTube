@@ -23,6 +23,7 @@ import {
   FaThumbsUp,
   FaTimes,
 } from "react-icons/fa";
+import MobileProfileMenu from "./MobileProfileMenu";
 
 const MobileProfile = () => {
   const userData = useSelector((state) => state.user);
@@ -65,14 +66,19 @@ const MobileProfile = () => {
           <MdOutlineSwitchAccount className="text-xl " />
           SignIn with other account
         </button>
-        <button className="bg-gray-800 text-nowrap px-3 py-1 rounded-2xl text-sm flex items-center justify-center gap-2">
-          <SiYoutubestudio className="text-xl text-orange-400 " />
-          PT Studio
-        </button>
+
         <button className="bg-gray-800 text-nowrap px-3 py-1 rounded-2xl text-sm flex items-center justify-center gap-2">
           <FiLogOut className="text-xl " />
           SignOut
         </button>
+      </div>
+
+      <div className="flex flex-col mt-[20px] ">
+        <MobileProfileMenu icon={<FaHistory />} text={"History"} />
+        <MobileProfileMenu icon={<FaList />} text={"Playlist"} />
+        <MobileProfileMenu icon={<GoVideo />} text={"Save Videos"} />
+        <MobileProfileMenu icon={<FaThumbsUp />} text={"Like Videos"} />
+        <MobileProfileMenu icon={<SiYoutubestudio />} text={"PT Studio"} />
       </div>
     </div>
   );
