@@ -3,7 +3,9 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/User.model.js";
 import { uploadOnCloudinary } from "../config/cloudinary.js";
+import { sendMail } from "../config/sendMail.js";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 const generateAccessTokenAndRefreshToken = async (userId) => {
   //console.log("generateAccessTokenAndRefreshToken called with userId:", userId);
@@ -323,6 +325,60 @@ const googleAuth = asyncHandler(async (req, res) => {
     );
 });
 
+const sendOtp = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new ApiError(400, "User does not found");
+  }
+
+  const otp = Math.floor(1000 + Math.random() * 9000).toString();
+
+  user.resetOtp = otp;
+  user.otpExpires = Date.now() + 5 * 60 * 1000;
+  user.isOtpVerified = false;
+
+  await user.save();
+
+  await sendMail(email, otp);
+  return new ApiResponse(200, "Otp send successfully");
+});
+
+const verifyOtp = asyncHandler(async (req, res) => {
+  const { email, otp } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user || user.resetOtp != otp || user.otpExpires < Date.now()) {
+    return new ApiError(400, "Invalid OTP");
+  }
+
+  user.resetOtp = undefined;
+  user.otpExpires = undefined;
+  user.isOtpVerified = true;
+
+  await user.save();
+  return new ApiResponse(200, "OTP Verified Successfully");
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user || !user.isOtpVerified) {
+    return new ApiError(400, "OTP Verification required");
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  user.password = hashedPassword;
+  user.isOtpVerified = false;
+
+  await user.save();
+
+  return new ApiResponse(201, "Password reset successfully !");
+});
+
 export {
   registerUser,
   logIn,
@@ -331,4 +387,7 @@ export {
   changeCurrentPassword,
   currentUser,
   googleAuth,
+  sendOtp,
+  verifyOtp,
+  resetPassword,
 };
