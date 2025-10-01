@@ -8,10 +8,20 @@ const GetCurrentUser = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        dispatch(setUserData(null));
+        return;
+      }
       try {
         const result = await axios.get(
           `${serverUrl}/api/v1/users/current-user`,
-          { withCredentials: true }
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
         );
         dispatch(setUserData(result.data.data));
         console.log(result.data.data);
@@ -22,6 +32,7 @@ const GetCurrentUser = () => {
     };
     fetchUser();
   }, []);
+
   return <div></div>;
 };
 

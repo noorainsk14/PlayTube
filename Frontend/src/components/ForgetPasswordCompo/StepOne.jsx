@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const StepOne = ({ email, setEmail, onClick }) => {
+const StepOne = ({ email, setEmail, onClick, loading }) => {
   const navigate = useNavigate();
 
   return (
@@ -31,8 +31,14 @@ const StepOne = ({ email, setEmail, onClick }) => {
           <button
             type="submit"
             className="w-full bg-orange-600 hover:bg-orange-700 transition py-2 px-4 rounded-md font-medium"
+            onClick={onClick}
+            disabled={loading}
           >
-            Send OTP
+            {loading ? (
+              <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+              "Send OTP"
+            )}
           </button>
         </div>
       </form>

@@ -343,7 +343,7 @@ const sendOtp = asyncHandler(async (req, res) => {
   await user.save();
 
   await sendMail(email, otp);
-  return new ApiResponse(200, "Otp send successfully");
+  return res.status(200).json(new ApiResponse(200, "Otp send successfully"));
 });
 
 const verifyOtp = asyncHandler(async (req, res) => {
@@ -351,7 +351,7 @@ const verifyOtp = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user || user.resetOtp != otp || user.otpExpires < Date.now()) {
-    return new ApiError(400, "Invalid OTP");
+    throw new ApiError(400, "Invalid OTP");
   }
 
   user.resetOtp = undefined;
@@ -359,7 +359,9 @@ const verifyOtp = asyncHandler(async (req, res) => {
   user.isOtpVerified = true;
 
   await user.save();
-  return new ApiResponse(200, "OTP Verified Successfully");
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Otp verified successfully"));
 });
 
 const resetPassword = asyncHandler(async (req, res) => {
@@ -367,7 +369,7 @@ const resetPassword = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user || !user.isOtpVerified) {
-    return new ApiError(400, "OTP Verification required");
+    throw new ApiError(400, "OTP Verification required");
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -376,7 +378,9 @@ const resetPassword = asyncHandler(async (req, res) => {
 
   await user.save();
 
-  return new ApiResponse(201, "Password reset successfully !");
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "Password reset successfully"));
 });
 
 export {
