@@ -58,7 +58,7 @@ const StepTwo = ({
         <button
           className="text-orange-400 text-sm hover:underline hover:cursor-pointer mt-4"
           onClick={() => {
-            navigate("/change-password");
+            navigate("/forget-password");
           }}
         >
           forget password

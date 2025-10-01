@@ -13,6 +13,7 @@ import LikeVideos from "./pages/LikeVideos/LikeVideos";
 import History from "./pages/History/History";
 import GetCurrentUser from "./customHooks/GetCurrentUser";
 import MobileProfile from "./components/MobileProfile";
+import ForgetPassword from "./pages/ForgetPassword";
 
 export const serverUrl = "http://localhost:8080";
 
@@ -51,6 +52,7 @@ function App() {
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/forget-password" element={<ForgetPassword />} />
       </Routes>
     </>
   );
