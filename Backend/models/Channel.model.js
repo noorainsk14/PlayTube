@@ -23,7 +23,7 @@ const channelSchema = new Schema(
       type: String,
       default: "",
     },
-    profileImg: {
+    avatar: {
       type: String,
       default: "",
     },

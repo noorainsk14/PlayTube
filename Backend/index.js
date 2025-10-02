@@ -6,7 +6,7 @@ import conntectToDb from "./config/db.cofig.js";
 conntectToDb()
   .then(() => {
     app.listen(process.env.PORT, () => {
-      console.log("server is runnint at port ", process.env.PORT);
+      console.log("server is running at port ", process.env.PORT);
     });
   })
   .catch(() => {

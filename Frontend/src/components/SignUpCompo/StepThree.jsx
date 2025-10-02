@@ -6,8 +6,8 @@ const StepThree = ({
   frontendImage,
   handleImage,
   backendImage,
-  coverImage,
-  setCoverImage,
+  //coverImage,
+  //setCoverImage,
   loading,
   onSubmit,
   step,
@@ -47,13 +47,13 @@ const StepThree = ({
             )}
           </div>
 
-          {coverImage && (
+          {/* {coverImage && (
             <img
               src={URL.createObjectURL(coverImage)}
               alt="Cover"
               className="w-20 h-10 object-cover rounded mt-5"
             />
-          )}
+          )} */}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -65,13 +65,13 @@ const StepThree = ({
             onChange={handleImage}
           />
 
-          <label className="label text-white text-lg ml-5">Cover Image</label>
+          {/* <label className="label text-white text-lg ml-5">Cover Image</label>
           <input
             type="file"
             accept="image/*"
             className="file-input rounded-full w-[230px]"
             onChange={(e) => setCoverImage(e.target.files[0])}
-          />
+          /> */}
         </div>
       </div>
 

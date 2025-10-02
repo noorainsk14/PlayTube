@@ -20,7 +20,7 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [frontendImage, setFrontendImage] = useState(null);
   const [backendImage, setBackendImage] = useState(null);
-  const [coverImage, setCoverImage] = useState(null);
+  //const [coverImage, setCoverImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
@@ -101,8 +101,10 @@ const SignUp = () => {
     formData.append("email", email);
     formData.append("password", password);
     formData.append("avatar", backendImage);
-    formData.append("coverImage", coverImage);
+
+    //formData.append("coverImage", coverImage);
     try {
+      console.log("Sending file:", backendImage);
       const result = await axios.post(
         `${serverUrl}/api/v1/users/register`,
         formData,
@@ -161,8 +163,8 @@ const SignUp = () => {
             frontendImage={frontendImage}
             handleImage={handleImage}
             backendImage={backendImage}
-            coverImage={coverImage}
-            setCoverImage={setCoverImage}
+            //coverImage={coverImage}
+            //setCoverImage={setCoverImage}
             loading={loading}
             onSubmit={handleSignUp}
             step={step}

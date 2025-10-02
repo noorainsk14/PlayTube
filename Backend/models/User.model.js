@@ -35,9 +35,9 @@ const userSchema = new Schema(
       required: true,
     },
 
-    coverImage: {
-      type: String,
-    },
+    // coverImage: {
+    //   type: String,
+    // },
 
     channel: {
       type: mongoose.Schema.Types.ObjectId,

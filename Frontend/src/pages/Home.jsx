@@ -169,17 +169,19 @@ const Home = () => {
           {/* {rigth} */}
 
           <div className="flex items-center gap-3">
+            {console.log(userData)}
+
             {userData?.channel && (
               <button className="hidden md:flex items-center gap-1 bg-gray-[#272727] px-3 py-1 border border-gray-700 rounded-full hover:cursor-pointer text-gray-400 hover:text-white">
                 <span className="text-lg">+</span>
                 <span>Create</span>
               </button>
             )}
-            <div className=" hidden md:dropdown dropdown-end">
+            <div className=" hidden  md:dropdown dropdown-end">
               <div
                 tabIndex={0}
                 role="button"
-                className="btn btn-ghost btn-circle avatar"
+                className="btn  btn-ghost btn-circle avatar"
               >
                 <div className="w-10 rounded-full">
                   {!userData?.avatar ? (
@@ -194,11 +196,11 @@ const Home = () => {
               </div>
               <ul
                 tabIndex={0}
-                className=" text-black menu menu-sm dropdown-content bg-gray-200 rounded-box z-1 mt-3 w-52 p-2 shadow"
+                className=" text-black menu menu-sm dropdown-content bg-gray-200 rounded-box z-1 mt-3 w-70 p-2 shadow"
               >
-                <li>
+                <div>
                   {userData && (
-                    <div className="flex items-center gap-3 p-4 border-b border-gray-700">
+                    <div className="flex  items-center gap-3 p-4 border-b border-gray-700">
                       <img
                         src={userData?.avatar}
                         alt="profileImage"
@@ -219,10 +221,10 @@ const Home = () => {
                       </div>
                     </div>
                   )}
-                </li>
+                </div>
                 <li>
                   <button onClick={handleGoogleAuth}>
-                    <FcGoogle size={20} className="w-5" />
+                    <FcGoogle size={20} className="w-5 " />
                     SignIn with Google
                   </button>
                 </li>

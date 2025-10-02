@@ -28,8 +28,11 @@ const registerUser = asyncHandler(async (req, res) => {
   const { fullName, email, username, password } = req.body;
   //console.log("email :", email);
 
+  // ✅ Normalize email
+  const normalizedEmail = email?.toLowerCase().trim();
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
+  if (!emailRegex.test(normalizedEmail)) {
     throw new ApiError(400, "Invalid email format");
   }
 
@@ -38,7 +41,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   if (
-    [fullName, email, username, password].some(
+    [fullName, normalizedEmail, username, password].some(
       (field) => !field || field.toString().trim() === ""
     )
   ) {
@@ -46,30 +49,33 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const existedUser = await User.findOne({
-    $or: [{ username }, { email }],
+    $or: [
+      { username: username.toLowerCase().trim() }, // ✅ lowercase username
+      { email: normalizedEmail },
+    ],
   });
 
   if (existedUser) {
     throw new ApiError(409, "User with this email or username already exists");
   }
 
-  const avatarLocalPath = req.files?.avatar[0]?.path;
+  const avatarLocalPath = req.file?.path;
 
-  let coverImageLocalPath;
-  if (
-    req.files &&
-    Array.isArray(req.files.coverImage) &&
-    req.files.coverImage.length > 0
-  ) {
-    coverImageLocalPath = req.files.coverImage[0].path;
-  }
+  //let coverImageLocalPath;
+  // if (
+  //   req.files &&
+  //   Array.isArray(req.files.coverImage) &&
+  //   req.files.coverImage.length > 0
+  // ) {
+  //   coverImageLocalPath = req.files.coverImage[0].path;
+  // }
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar file is required");
   }
 
   const avatar = await uploadOnCloudinary(avatarLocalPath);
-  const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+  //const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
   if (!avatar) {
     throw new ApiError(404, "Failed to upload Avatar");
@@ -78,10 +84,10 @@ const registerUser = asyncHandler(async (req, res) => {
   const user = await User.create({
     fullName,
     avatar: avatar.url,
-    coverImage: coverImage && coverImage.url ? coverImage.url : "",
-    email,
+    //coverImage: coverImage && coverImage.url ? coverImage.url : "",
+    email: normalizedEmail, // ✅ store normalized email
     password,
-    username: username.toLowerCase(),
+    username: username.toLowerCase().trim(), // ✅ store lowercase username
   });
 
   console.log(user);
@@ -106,8 +112,14 @@ const logIn = asyncHandler(async (req, res) => {
     throw new ApiError(404, "username or email are required");
   }
 
+  // ✅ Normalize email if provided
+  const normalizedEmail = email?.toLowerCase().trim();
+
   const user = await User.findOne({
-    $or: [{ username }, { email }],
+    $or: [
+      { username: username?.toLowerCase().trim() }, // ✅ lowercase username
+      { email: normalizedEmail },
+    ],
   });
 
   if (!user) {
@@ -366,18 +378,18 @@ const verifyOtp = asyncHandler(async (req, res) => {
 
 const resetPassword = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  const normalizedEmail = email.toLowerCase();
+
+  const user = await User.findOne({ email: normalizedEmail });
 
   if (!user || !user.isOtpVerified) {
-    throw new ApiError(400, "OTP Verification required");
+    throw new ApiError(400, "OTP verification required");
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-  user.password = hashedPassword;
+  user.password = password;
   user.isOtpVerified = false;
 
   await user.save();
-
   return res
     .status(200)
     .json(new ApiResponse(200, "Password reset successfully"));
