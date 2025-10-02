@@ -14,6 +14,8 @@ import History from "./pages/History/History";
 import GetCurrentUser from "./customHooks/GetCurrentUser";
 import MobileProfile from "./components/MobileProfile";
 import ForgetPassword from "./pages/ForgetPassword";
+import CreateChannel from "./pages/Channel/createChannel";
+import ViewChannel from "./pages/Channel/ViewChannel";
 
 export const serverUrl = "http://localhost:8080";
 
@@ -48,11 +50,13 @@ function App() {
           <Route path="/save-videos" element={<SaveVideos />} />
           <Route path="/like-videos" element={<LikeVideos />} />
           <Route path="/mobile-profile" element={<MobileProfile />} />
+          <Route path="/view-channel" element={<ViewChannel />} />
         </Route>
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
+        <Route path="/create-channel" element={<CreateChannel />} />
       </Routes>
     </>
   );

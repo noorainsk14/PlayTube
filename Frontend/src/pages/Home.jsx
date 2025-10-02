@@ -213,7 +213,14 @@ const Home = () => {
                         <p className="text-sm text-gray-700">
                           {userData?.email}
                         </p>
-                        <p className="text-sm text-blue-700 cursor-pointer hover:underline">
+                        <p
+                          className="text-sm text-blue-700 cursor-pointer hover:underline"
+                          onClick={() => {
+                            userData?.channel
+                              ? navigate("/view-channel")
+                              : navigate("/create-channel");
+                          }}
+                        >
                           {userData?.channel
                             ? "view channel"
                             : "create channel"}

@@ -105,7 +105,14 @@ const MobileProfile = () => {
             <span className="text-gray-400 text-sm">
               {userData?.userData?.email}
             </span>
-            <p className="text-sm text-blue-400 cursor-pointer">
+            <p
+              className="text-sm text-blue-400 cursor-pointer"
+              onClick={() => {
+                userData?.channel
+                  ? navigate("/view-channel")
+                  : navigate("/create-channel");
+              }}
+            >
               {userData?.userData?.channel ? "view channel" : "create channel"}
             </p>
           </div>

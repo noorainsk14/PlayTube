@@ -4,11 +4,8 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/User.model.js";
 import { Channel } from "../models/Channel.model.js";
 import { uploadOnCloudinary } from "../config/cloudinary.js";
-import { sendMail } from "../config/sendMail.js";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
 
-const createChannel = asynHandler(async (req, res) => {
+const createChannel = asyncHandler(async (req, res) => {
   const { name, description, category } = req.body;
   const userId = req.userId;
   const existingChannel = await Channel.findOne({ owner: userId });
