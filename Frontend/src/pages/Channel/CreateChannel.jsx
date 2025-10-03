@@ -4,6 +4,9 @@ import { useSelector } from "react-redux";
 import StepOne from "../../components/CreateChannelCompo/StepOne";
 import StepTwo from "../../components/CreateChannelCompo/StepTwo";
 import StepThree from "../../components/CreateChannelCompo/StepThree";
+import axios from "axios";
+import { serverUrl } from "../../App";
+import { showErrorToast, showSuccessToast } from "../../helper/toastHelper";
 
 const CreateChannel = () => {
   const { userData } = useSelector((state) => state.user);
@@ -26,7 +29,33 @@ const CreateChannel = () => {
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
 
-  const handleCreateChannel = () => {};
+  const handleCreateChannel = async () => {
+    const formData = new FormData();
+    formData.append("name", channelName);
+    formData.append("description", description);
+    formData.append("category", category);
+    if (avatar) formData.append("avatar", avatar);
+    if (coverImage) formData.append("coverImage", coverImage);
+    setLoading(true);
+    try {
+      const result = await axios.post(
+        `${serverUrl}/api/v1/channel/create-channel`,
+        formData,
+        { withCredentials: true }
+      );
+      console.log(result);
+      setLoading(false);
+      showSuccessToast(result.data?.message || "Channel created successfully!");
+      Navigate("view-channel");
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+
+      const message = error?.response?.data?.message || "Something went wrong";
+
+      showErrorToast(message);
+    }
+  };
 
   return (
     <div className=" min-h-screen bg-[#0f0f0f] text-white flex flex-col">

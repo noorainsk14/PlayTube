@@ -28,7 +28,7 @@ const StepOne = ({ identifier, setIdentifier, onNext, step, setStep }) => {
       <input
         type="text"
         className="input"
-        placeholder="username or email"
+        placeholder="Email"
         value={identifier}
         onChange={(e) => setIdentifier(e.target.value)}
       />

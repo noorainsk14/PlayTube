@@ -15,12 +15,19 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 //import routes
-
+// import error handler
+import errorHandler from "./utils/errorHandler.js";
 import userRouter from "./routes/user.route.js";
 import channelRouter from "./routes/channel.route.js";
 
 //route declaration
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/channel", channelRouter);
+
+// Response formatter middleware: wraps all successful JSON responses
+app.use(responseFormatter);
+
+// use error handler **after** all routes
+app.use(errorHandler);
 
 export { app };

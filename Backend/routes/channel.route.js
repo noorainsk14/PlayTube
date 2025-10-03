@@ -7,6 +7,7 @@ import { createChannel } from "../controllers/channel.controller.js";
 const router = Router();
 
 router.route("/create-channel").post(
+  verifyJwt,
   upload.fields([
     {
       name: "avatar",
@@ -17,6 +18,7 @@ router.route("/create-channel").post(
       maxCount: 1,
     },
   ]),
+
   createChannel
 );
 
