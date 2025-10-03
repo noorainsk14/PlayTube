@@ -1,28 +1,27 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import axios from "axios";
 import { serverUrl } from "../App";
 import { useDispatch } from "react-redux";
-import { setUserData } from "../redux/userSlice";
+import { setChannelData, setUserData } from "../redux/userSlice";
 
-const GetCurrentUser = () => {
+const GetChannelData = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchChannel = async () => {
       try {
         const result = await axios.get(
-          `${serverUrl}/api/v1/users/current-user`,
+          `${serverUrl}/api/v1/channel/get-channel`,
           { withCredentials: true }
         );
-        dispatch(setUserData(result.data.data));
+        dispatch(setChannelData(result.data.data));
         console.log(result.data);
       } catch (error) {
         console.log(error);
-        dispatch(setUserData(null));
+        dispatch(setChannelData(null));
       }
     };
-    fetchUser();
+    fetchChannel();
   }, [dispatch]);
-  return <div></div>;
 };
 
-export default GetCurrentUser;
+export default GetChannelData;

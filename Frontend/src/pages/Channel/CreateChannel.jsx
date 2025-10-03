@@ -7,6 +7,7 @@ import StepThree from "../../components/CreateChannelCompo/StepThree";
 import axios from "axios";
 import { serverUrl } from "../../App";
 import { showErrorToast, showSuccessToast } from "../../helper/toastHelper";
+import { useNavigate } from "react-router-dom";
 
 const CreateChannel = () => {
   const { userData } = useSelector((state) => state.user);
@@ -17,6 +18,7 @@ const CreateChannel = () => {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleAvatar = (e) => {
     setAvatar(e.target.files[0]);
@@ -46,7 +48,7 @@ const CreateChannel = () => {
       console.log(result);
       setLoading(false);
       showSuccessToast(result.data?.message || "Channel created successfully!");
-      Navigate("view-channel");
+      navigate("view-channel");
     } catch (error) {
       console.log(error);
       setLoading(false);

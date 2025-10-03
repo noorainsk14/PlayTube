@@ -169,8 +169,6 @@ const Home = () => {
           {/* {rigth} */}
 
           <div className="flex items-center gap-3">
-            {console.log(userData)}
-
             {userData?.channel && (
               <button className="hidden md:flex items-center gap-1 bg-gray-[#272727] px-3 py-1 border border-gray-700 rounded-full hover:cursor-pointer text-gray-400 hover:text-white">
                 <span className="text-lg">+</span>

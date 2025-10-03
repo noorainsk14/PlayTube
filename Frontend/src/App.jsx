@@ -16,11 +16,13 @@ import MobileProfile from "./components/MobileProfile";
 import ForgetPassword from "./pages/ForgetPassword";
 import CreateChannel from "./pages/Channel/createChannel";
 import ViewChannel from "./pages/Channel/ViewChannel";
+import GetChannelData from "./customHooks/GetChannelData";
 
 export const serverUrl = "http://localhost:8080";
 
 function App() {
   GetCurrentUser();
+  GetChannelData();
   return (
     <>
       <Toaster
