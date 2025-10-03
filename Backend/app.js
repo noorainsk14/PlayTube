@@ -17,6 +17,7 @@ app.use(cookieParser());
 //import routes
 // import error handler
 import errorHandler from "./utils/errorHandler.js";
+import { responseFormatter } from "./utils/responseFormatter.js";
 import userRouter from "./routes/user.route.js";
 import channelRouter from "./routes/channel.route.js";
 

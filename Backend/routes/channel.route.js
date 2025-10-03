@@ -2,7 +2,10 @@ import { Router } from "express";
 import upload from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 
-import { createChannel } from "../controllers/channel.controller.js";
+import {
+  createChannel,
+  getChannelData,
+} from "../controllers/channel.controller.js";
 
 const router = Router();
 
@@ -21,5 +24,7 @@ router.route("/create-channel").post(
 
   createChannel
 );
+
+router.route("/get-channel").get(verifyJwt, getChannelData);
 
 export default router;

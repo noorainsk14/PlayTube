@@ -32,10 +32,10 @@ const createChannel = asyncHandler(async (req, res) => {
     const uploadedCoverImage = await uploadOnCloudinary(
       req.files.coverImage[0].path
     );
-    coverImage = uploadedCoverImage?.secure_url; // ✅ extract only the URL
+    coverImage = uploadedCoverImage?.secure_url;
   }
 
-  const createdChannel = await Channel.create({
+  const channel = await Channel.create({
     name,
     description,
     category,
@@ -43,12 +43,6 @@ const createChannel = asyncHandler(async (req, res) => {
     coverImage,
     owner: userId,
   });
-
-  // Populate the owner field after creation
-  const channel = await Channel.findById(createdChannel._id).populate(
-    "owner",
-    "-password -refreshToken"
-  );
 
   await User.findByIdAndUpdate(userId, {
     channel: channel._id,
@@ -61,4 +55,19 @@ const createChannel = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, { channel }, "Channel created successfully !!"));
 });
 
-export { createChannel };
+const getChannelData = asyncHandler(async (req, res) => {
+  const userId = req.user?._id; // Extract just the user ID
+  console.log("channel user", userId);
+
+  const channel = await Channel.findOne({ owner: userId }).populate("owner");
+
+  if (!channel) {
+    throw new ApiError(404, "Channel is not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { channel }, "Channel fetched successfully!"));
+});
+
+export { createChannel, getChannelData };
