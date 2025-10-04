@@ -17,6 +17,7 @@ import ForgetPassword from "./pages/ForgetPassword";
 import CreateChannel from "./pages/Channel/createChannel";
 import ViewChannel from "./pages/Channel/ViewChannel";
 import GetChannelData from "./customHooks/GetChannelData";
+import UpdateChannel from "./pages/Channel/UpdateChannel";
 
 export const serverUrl = "http://localhost:8080";
 
@@ -53,6 +54,7 @@ function App() {
           <Route path="/like-videos" element={<LikeVideos />} />
           <Route path="/mobile-profile" element={<MobileProfile />} />
           <Route path="/view-channel" element={<ViewChannel />} />
+          <Route path="/update-channel" element={<UpdateChannel />} />
         </Route>
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<SignIn />} />

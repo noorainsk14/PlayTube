@@ -13,8 +13,8 @@ const GetChannelData = () => {
           `${serverUrl}/api/v1/channel/get-channel`,
           { withCredentials: true }
         );
-        dispatch(setChannelData(result.data.data));
-        console.log(result.data);
+        dispatch(setChannelData(result.data.data?.channel));
+        console.log(result.data.data?.channel);
       } catch (error) {
         console.log(error);
         dispatch(setChannelData(null));

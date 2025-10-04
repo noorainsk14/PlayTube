@@ -4,9 +4,13 @@ const StepThree = ({
   coverImage,
   description,
   setDescription,
+  existingAvatarUrl,
+  existingCoverImageUrl,
   category,
   setCategory,
   loading,
+  text,
+  buttonText,
   setLoading,
   prevStep,
   onChange,
@@ -14,7 +18,7 @@ const StepThree = ({
 }) => {
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4"> Create Channel</h2>
+      <h2 className="text-2xl font-semibold mb-4">{text} </h2>
 
       <div className="flex flex-col items-center mb-6">
         <label
@@ -23,8 +27,12 @@ const StepThree = ({
         >
           {coverImage ? (
             <img
-              key={coverImage?.name}
               src={URL.createObjectURL(coverImage)}
+              className="w-full h-30 rounded-lg object-cover border border-gray-700 mb-2"
+            />
+          ) : existingCoverImageUrl ? (
+            <img
+              src={existingCoverImageUrl}
               className="w-full h-30 rounded-lg object-cover border border-gray-700 mb-2"
             />
           ) : (
@@ -66,13 +74,15 @@ const StepThree = ({
 
       <button
         onClick={onClick}
-        disabled={!category || !description}
+        disabled={
+          !category || !description || (!coverImage && !existingCoverImageUrl)
+        }
         className="w-full flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 transition py-3 rounded-lg font-meduim disabled:bg-gray-600 "
       >
         {loading ? (
           <span className="loading loading-spinner text-white" />
         ) : (
-          "Create Channel"
+          { buttonText }
         )}
       </button>
       <span
