@@ -28,7 +28,7 @@ router.route("/create-channel").post(
 
 router.route("/get-channel").get(verifyJwt, getChannelData);
 
-router.route("/update-channel").post(
+router.route("/update-channel").patch(
   verifyJwt,
   upload.fields([
     {

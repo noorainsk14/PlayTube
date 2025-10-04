@@ -82,7 +82,7 @@ const StepThree = ({
         {loading ? (
           <span className="loading loading-spinner text-white" />
         ) : (
-          { buttonText }
+          buttonText
         )}
       </button>
       <span

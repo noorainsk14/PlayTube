@@ -48,7 +48,7 @@ const CreateChannel = () => {
       console.log(result);
       setLoading(false);
       showSuccessToast(result.data?.message || "Channel created successfully!");
-      navigate("view-channel");
+      navigate("/view-channel");
     } catch (error) {
       console.log(error);
       setLoading(false);

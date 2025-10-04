@@ -10,7 +10,7 @@ const StepTwo = ({
   button,
   prevStep,
   onClick,
-  existingAvatarUrl, // NEW PROP
+  existingAvatarUrl,
 }) => {
   let avatarPreview = null;
 

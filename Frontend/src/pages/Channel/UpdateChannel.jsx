@@ -2,7 +2,6 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { useEffect, useState } from "react";
-import logo from "../../assets/play_13955998.png";
 
 import axios from "axios";
 import { serverUrl } from "../../App";
@@ -52,8 +51,8 @@ const UpdateChannel = () => {
     setLoading(true);
 
     try {
-      const result = await axios.put(
-        `${serverUrl}/api/v1/channel/update-channel`, // Use your actual update endpoint
+      const result = await axios.patch(
+        `${serverUrl}/api/v1/channel/update-channel`,
         formData,
         { withCredentials: true }
       );

@@ -58,6 +58,7 @@ const createChannel = asyncHandler(async (req, res) => {
 const getChannelData = asyncHandler(async (req, res) => {
   const userId = req.user?._id; // Extract just the user ID
   console.log("channel user", userId);
+  console.log("User from JWT middleware:", req.user);
 
   const channel = await Channel.findOne({ owner: userId }).populate("owner");
 
@@ -70,53 +71,58 @@ const getChannelData = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { channel }, "Channel fetched successfully!"));
 });
 
-const updateChannel = asyncHandler(async(req, res) =>{
+const updateChannel = asyncHandler(async (req, res) => {
   const { name, description, category } = req.body;
   const userId = req.user?._id || req.userId;
-  const channel = await Channel.findOne({owner: userId})
 
-  if(!channel){
-    throw new ApiError(404, "Channel not found !!")
+  const channel = await Channel.findOne({ owner: userId });
+  if (!channel) {
+    throw new ApiError(404, "Channel not found !!");
   }
 
-  if(name && name !== channel.name){
-    const nameExist = await Channel.findOne({name})
-
-    if(nameExist){
-      throw new ApiError(400, "Channel name already taken !!")
+  if (name && name !== channel.name) {
+    const nameExist = await Channel.findOne({ name });
+    if (nameExist) {
+      throw new ApiError(400, "Channel name already taken !!");
     }
-    channel.name = name
+    channel.name = name;
   }
 
-  if(description !== undefined){
-    channel.description = description
+  if (description !== undefined) {
+    channel.description = description;
   }
 
-  if(category !== undefined){
-    channel.category = description
+  if (category !== undefined) {
+    channel.category = category; // ✅ FIXED: was `description` before
   }
 
-  if(req.files?.avatar){
-    const avatar = await uploadOnCloudinary(req.files.avatar[0].path)
-    channel.avatar = avatar
+  if (req.files?.avatar) {
+    const avatar = await uploadOnCloudinary(req.files.avatar[0].path);
+    channel.avatar = avatar?.secure_url;
   }
 
-  if(req.files?.coverImage){
-    const coverImage = await uploadOnCloudinary(req.files.coverImage[0].path)
-    channel.coverImage = coverImage
+  if (req.files?.coverImage) {
+    const coverImage = await uploadOnCloudinary(req.files.coverImage[0].path);
+    channel.coverImage = coverImage?.secure_url;
   }
 
   const updatedChannel = await channel.save();
 
-  await User.findByIdAndDelete(userId, {
-    username: name || undefined,
-    avatar : channel.avatar || undefined
-  },{new:true})
+  // ✅ Only update user if needed
+  const userUpdateData = {};
+  if (name) userUpdateData.username = name;
+  if (channel.avatar) userUpdateData.avatar = channel.avatar;
+
+  if (Object.keys(userUpdateData).length > 0) {
+    await User.findByIdAndUpdate(userId, userUpdateData, { new: true });
+  }
 
   return res
-  .status(200)
-  .json(new ApiResponse(201, { updatedChannel }, "Channel updated successfully !!"));
+    .status(200)
+    .json(
+      new ApiResponse(200, { updatedChannel }, "Channel updated successfully !!")
+    );
+});
 
-})
 
 export { createChannel, getChannelData, updateChannel };

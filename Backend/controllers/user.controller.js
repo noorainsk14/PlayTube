@@ -140,6 +140,7 @@ const logIn = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
+    sameSite: "None",
   };
 
   return res
@@ -211,6 +212,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     const options = {
       httpOnly: true,
       secure: true,
+      sameSite: "None",
     };
 
     const { accessToken, refreshToken: newRefreshToken } =
@@ -273,7 +275,8 @@ const googleAuth = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: true,
+    sameSite: "None",
     path: "/",
   };
 
