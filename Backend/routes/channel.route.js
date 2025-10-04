@@ -5,6 +5,7 @@ import { verifyJwt } from "../middlewares/auth.middleware.js";
 import {
   createChannel,
   getChannelData,
+  updateChannel,
 } from "../controllers/channel.controller.js";
 
 const router = Router();
@@ -26,5 +27,21 @@ router.route("/create-channel").post(
 );
 
 router.route("/get-channel").get(verifyJwt, getChannelData);
+
+router.route("/update-channel").post(
+  verifyJwt,
+  upload.fields([
+    {
+      name: "avatar",
+      maxCount: 1,
+    },
+    {
+      name: "coverImage",
+      maxCount: 1,
+    },
+  ]),
+
+  updateChannel
+);
 
 export default router;

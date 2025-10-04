@@ -70,4 +70,53 @@ const getChannelData = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { channel }, "Channel fetched successfully!"));
 });
 
-export { createChannel, getChannelData };
+const updateChannel = asyncHandler(async(req, res) =>{
+  const { name, description, category } = req.body;
+  const userId = req.user?._id || req.userId;
+  const channel = await Channel.findOne({owner: userId})
+
+  if(!channel){
+    throw new ApiError(404, "Channel not found !!")
+  }
+
+  if(name && name !== channel.name){
+    const nameExist = await Channel.findOne({name})
+
+    if(nameExist){
+      throw new ApiError(400, "Channel name already taken !!")
+    }
+    channel.name = name
+  }
+
+  if(description !== undefined){
+    channel.description = description
+  }
+
+  if(category !== undefined){
+    channel.category = description
+  }
+
+  if(req.files?.avatar){
+    const avatar = await uploadOnCloudinary(req.files.avatar[0].path)
+    channel.avatar = avatar
+  }
+
+  if(req.files?.coverImage){
+    const coverImage = await uploadOnCloudinary(req.files.coverImage[0].path)
+    channel.coverImage = coverImage
+  }
+
+  const updatedChannel = await channel.save();
+
+  await User.findByIdAndDelete(userId, {
+    username: name || undefined,
+    avatar : channel.avatar || undefined
+  },{new:true})
+
+  return res
+  .status(200)
+  .json(new ApiResponse(201, { updatedChannel }, "Channel updated successfully !!"));
+
+})
+
+export { createChannel, getChannelData, updateChannel };
