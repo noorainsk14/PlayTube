@@ -170,7 +170,12 @@ const Home = () => {
 
           <div className="flex items-center gap-3">
             {userData?.channel && (
-              <button className="hidden md:flex items-center gap-1 bg-gray-[#272727] px-3 py-1 border border-gray-700 rounded-full hover:cursor-pointer text-gray-400 hover:text-white">
+              <button
+                onClick={() => {
+                  navigate("/create");
+                }}
+                className="hidden md:flex items-center gap-1 bg-gray-[#272727] px-3 py-1 border border-gray-700 rounded-full hover:cursor-pointer text-gray-400 hover:text-white"
+              >
                 <span className="text-lg">+</span>
                 <span>Create</span>
               </button>
@@ -406,7 +411,10 @@ const Home = () => {
         <MobileSizeNav
           icon={<IoIosAddCircle size={40} />}
           active={active === "+"}
-          onClick={() => setActive("+")}
+          onClick={() => {
+            setActive("+");
+            navigate("/create");
+          }}
         />
         <MobileSizeNav
           icon={<MdOutlineSubscriptions />}

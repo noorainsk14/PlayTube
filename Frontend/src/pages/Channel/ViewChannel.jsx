@@ -56,7 +56,12 @@ const ViewChannel = () => {
               Upload and record at home or on the go. Everything you make public
               will appear here
             </p>
-            <button className="bg-white text-black mt-4 px-5 py-1 rounded-full font-medium cursor-pointer active:bg-gray-900 active:text-white">
+            <button
+              onClick={() => {
+                navigate("/create");
+              }}
+              className="bg-white text-black mt-4 px-5 py-1 rounded-full font-medium cursor-pointer active:bg-gray-900 active:text-white"
+            >
               Create
             </button>
           </div>

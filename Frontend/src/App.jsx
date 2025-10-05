@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
@@ -18,12 +18,26 @@ import CreateChannel from "./pages/Channel/createChannel";
 import ViewChannel from "./pages/Channel/ViewChannel";
 import GetChannelData from "./customHooks/GetChannelData";
 import UpdateChannel from "./pages/Channel/UpdateChannel";
+import { useSelector } from "react-redux";
+import { Children } from "react";
+import { showErrorToast } from "./helper/toastHelper";
+import CreatePage from "./pages/CreatePage";
 
 export const serverUrl = "http://localhost:8080";
+
+const ProtectRoute = ({ userData, children }) => {
+  if (!userData) {
+    showErrorToast("Please signUp first to use this feature");
+    return <Navigate to={"/"} replace />;
+  }
+  return children;
+};
 
 function App() {
   GetCurrentUser();
   GetChannelData();
+
+  const { userData } = useSelector((state) => state.user);
   return (
     <>
       <Toaster
@@ -46,21 +60,92 @@ function App() {
       />
       <Routes>
         <Route path="/" element={<Home />}>
-          <Route path="/shorts" element={<Shorts />} />
+          <Route
+            path="/shorts"
+            element={
+              <ProtectRoute userData={userData}>
+                <Shorts />
+              </ProtectRoute>
+            }
+          />
           <Route path="/subscriptions" element={<Subscriptions />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/playlist" element={<Playlist />} />
-          <Route path="/save-videos" element={<SaveVideos />} />
-          <Route path="/like-videos" element={<LikeVideos />} />
-          <Route path="/mobile-profile" element={<MobileProfile />} />
-          <Route path="/view-channel" element={<ViewChannel />} />
-          <Route path="/update-channel" element={<UpdateChannel />} />
+          <Route
+            path="/history"
+            element={
+              <ProtectRoute userData={userData}>
+                <History />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/playlist"
+            element={
+              <ProtectRoute userData={userData}>
+                <Playlist />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/save-videos"
+            element={
+              <ProtectRoute userData={userData}>
+                <SaveVideos />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/like-videos"
+            element={
+              <ProtectRoute userData={userData}>
+                <LikeVideos />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/mobile-profile"
+            element={
+              <ProtectRoute userData={userData}>
+                <MobileProfile />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/view-channel"
+            element={
+              <ProtectRoute userData={userData}>
+                <ViewChannel />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/update-channel"
+            element={
+              <ProtectRoute userData={userData}>
+                <UpdateChannel />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/create"
+            element={
+              <ProtectRoute userData={userData}>
+                <CreatePage />
+              </ProtectRoute>
+            }
+          />
         </Route>
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
-        <Route path="/create-channel" element={<CreateChannel />} />
+        <Route
+          path="/create-channel"
+          element={
+            <ProtectRoute userData={userData}>
+              <CreateChannel />
+            </ProtectRoute>
+          }
+        />
       </Routes>
     </>
   );
