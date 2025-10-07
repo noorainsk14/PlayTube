@@ -22,6 +22,11 @@ import { useSelector } from "react-redux";
 import { Children } from "react";
 import { showErrorToast } from "./helper/toastHelper";
 import CreatePage from "./pages/CreatePage";
+import CreateVideo from "./pages/Videos/CreateVideo";
+import CreateShort from "./pages/Shorts/CreateShort";
+import CreatePlaylist from "./pages/Playlist/CreatePlaylist";
+import CreatePost from "./pages/Post/CreatePost";
+import GetContentData from "./customHooks/GetContentData";
 
 export const serverUrl = "http://localhost:8080";
 
@@ -36,6 +41,7 @@ const ProtectRoute = ({ userData, children }) => {
 function App() {
   GetCurrentUser();
   GetChannelData();
+  GetContentData();
 
   const { userData } = useSelector((state) => state.user);
   return (
@@ -117,11 +123,52 @@ function App() {
               </ProtectRoute>
             }
           />
+
           <Route
             path="/update-channel"
             element={
               <ProtectRoute userData={userData}>
                 <UpdateChannel />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/update"
+            element={
+              <ProtectRoute userData={userData}>
+                <CreatePage />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/create-video"
+            element={
+              <ProtectRoute userData={userData}>
+                <CreateVideo />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/create-short"
+            element={
+              <ProtectRoute userData={userData}>
+                <CreateShort />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/create-playlist"
+            element={
+              <ProtectRoute userData={userData}>
+                <CreatePlaylist />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="/create-post"
+            element={
+              <ProtectRoute userData={userData}>
+                <CreatePost />
               </ProtectRoute>
             }
           />
@@ -134,6 +181,7 @@ function App() {
             }
           />
         </Route>
+
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/change-password" element={<ChangePassword />} />
