@@ -60,7 +60,8 @@ const videoSchema = new Schema({
         required:true
     },
     tags:{
-        type:String,
+        type:[String],
+        default: []
     },
     views:{
         type:Number,

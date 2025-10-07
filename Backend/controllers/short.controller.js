@@ -44,6 +44,17 @@ const uploadShort = asyncHandler(async(req, res) => {
 
 })
 
+const getAllShorts = asyncHandler(async(req, res) => {
+  const shorts = await Short.find().sort({createdAt: -1}).populate('channel')
+
+  if(!shorts) {
+    throw new ApiError(400, "Shorts are not found !!")
+  }
+
+  return res.status(200).json( new ApiResponse(200, {shorts}, "Shorts fetch successfully !!"))
+})
+
 export {
-    uploadShort
+    uploadShort,
+    getAllShorts
 }

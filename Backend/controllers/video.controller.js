@@ -55,4 +55,14 @@ const createVideo = asyncHandler(async(req, res) => {
 
 })
 
-export {createVideo}
+const getAllVideos = asyncHandler(async(req, res) => {
+  const videos = await Video.find().sort({createdAt: -1}).populate('channel')
+
+  if(!videos) {
+    throw new ApiError(400, "Videos are not found !!")
+  }
+
+  return res.status(200).json( new ApiResponse(200, {videos}, "Videos fetch successfully !!"))
+})
+
+export {createVideo, getAllVideos}
