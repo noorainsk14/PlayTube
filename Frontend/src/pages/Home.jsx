@@ -32,6 +32,8 @@ import axios from "axios";
 import { serverUrl } from "../App";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../utils/firebase.js";
+import AllVideosPage from "../components/AllVideosPage.jsx";
+import AllShortsPage from "../components/AllShortsPage.jsx";
 
 const Home = () => {
   const [sideBarOpen, setSideBarOpen] = useState(true);
@@ -449,16 +451,22 @@ const Home = () => {
         }`}
       >
         {location.pathname === "/" && (
-          <div className="flex items-center gap-3 overflow-x-auto whitespace-nowrap pt-2 mt-[60px] mb-9 custom-scrollbar pb-2 ">
-            {categories.map((cat, idx) => (
-              <button
-                key={idx}
-                className="bg-[#272727] px-4 py-1 rounded-lg text-sm hover:bg-gray-700 whitespace-nowrap hover:cursor-pointer"
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+          <>
+            <div className="flex items-center gap-3 overflow-x-auto whitespace-nowrap pt-2 mt-[60px] mb-9 custom-scrollbar pb-2 ">
+              {categories.map((cat, idx) => (
+                <button
+                  key={idx}
+                  className="bg-[#272727] px-4 py-1 rounded-lg text-sm hover:bg-gray-700 whitespace-nowrap hover:cursor-pointer"
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+            <div className="mt-3">
+              <AllVideosPage />
+              <AllShortsPage />
+            </div>
+          </>
         )}
         <div className="mt-2">
           <Outlet />

@@ -2,17 +2,21 @@ import axios from "axios";
 import React from "react";
 import { useState } from "react";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { serverUrl } from "../../App";
 import { showErrorToast, showSuccessToast } from "../../helper/toastHelper";
+import { setShortData } from "../../redux/contentSlice";
+import { setChannelData } from "../../redux/userSlice";
 
 const CreateShort = () => {
   const { channelData } = useSelector((state) => state.user);
+  const { shortData } = useSelector((state) => state.content);
   const [shortUrl, setShortUrl] = useState(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const handleUpload = async () => {
     setLoading(true);
@@ -34,8 +38,14 @@ const CreateShort = () => {
           withCredentials: true,
         }
       );
-      console.log(result);
+      console.log(result.data.data);
       showSuccessToast("Short uploaded successfully !!");
+      dispatch(setShortData([...shortData, result.data.data]));
+      const updateChannel = {
+        ...channelData,
+        shorts: [...(channelData.shorts || []), result.data.data],
+      };
+      dispatch(setChannelData(updateChannel));
     } catch (error) {
       console.log(error.response.data.message);
       showErrorToast(error.response.data.message || "Short Upload error !!");

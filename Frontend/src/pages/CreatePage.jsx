@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { FaVideo, FaPlay, FaPen, FaList } from "react-icons/fa";
 import create from "../assets/monitor2_10948974.png";
+import { useNavigate } from "react-router-dom";
 
 const CreatePage = () => {
   const [selectedItem, setSelectedItem] = useState(false);
+
+  const navigate = useNavigate();
   const options = [
     {
       id: "video",
@@ -26,6 +29,20 @@ const CreatePage = () => {
       title: "New Playlist",
     },
   ];
+
+  const handleRoute = () => {
+    const routes = {
+      video: "/create-video",
+      short: "/create-short",
+      post: "/create-post",
+      playlist: "/create-playlist",
+    };
+
+    if (selectedItem && routes[selectedItem]) {
+      navigate(routes[selectedItem]);
+    }
+  };
+
   return (
     <div className="bg-[#0f0f0f] min-h-screen text-white px-6 py-8 mt-10 flex flex-col">
       <header className="mb-12 border-b border-[#3f3f3f] pb-4">
@@ -37,6 +54,7 @@ const CreatePage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 flex-1">
         {options.map((opt, idx) => (
           <div
+            key={idx}
             className={`bg-[#1f1f1f] border border-[#3f3f3f] rounded-lg p-6 flex flex-col items-center text-center justify-center cursor-pointer transition ${
               selectedItem === opt.id
                 ? "ring-2 ring-red-500"
@@ -72,7 +90,10 @@ const CreatePage = () => {
                 .find((opt) => opt.id === selectedItem)
                 ?.title.toLocaleLowerCase()}
             </p>
-            <button className="bg-white text-black mt-4 px-5 py-1 rounded-full cursor-pointer hover:bg-gray-300 ">
+            <button
+              onClick={handleRoute}
+              className="bg-white text-black mt-4 px-5 py-1 rounded-full cursor-pointer hover:bg-gray-300 "
+            >
               + Create
             </button>
           </div>

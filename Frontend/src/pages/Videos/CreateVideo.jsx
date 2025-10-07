@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { serverUrl } from "../../App";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { showErrorToast, showSuccessToast } from "../../helper/toastHelper";
+import { setVideoData } from "../../redux/contentSlice";
+import { setChannelData } from "../../redux/userSlice";
 
 const CreateVideo = () => {
+  const { videoData } = useSelector((state) => state.content);
   const { channelData } = useSelector((state) => state.user);
   const [videoUrl, setVideoUrl] = useState(null);
   const [thumbnail, setThumbnail] = useState(null);
@@ -14,6 +17,7 @@ const CreateVideo = () => {
   const [tags, setTags] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleVideo = (e) => {
     setVideoUrl(e.target.files[0]);
@@ -40,11 +44,18 @@ const CreateVideo = () => {
         formData,
         { withCredentials: true }
       );
-      console.log(result.data);
+      const response = result.data.data.newVideo;
+      console.log(response);
       showSuccessToast("Video Uploaded Successfully");
       navigate("/");
+      dispatch(setVideoData([...videoData, response]));
+      const updateChannel = {
+        ...channelData,
+        videos: [...(channelData.videos || []), response],
+      };
+      dispatch(setChannelData(updateChannel));
     } catch (error) {
-      console.log(error.response.data.message);
+      console.log(error.response);
       showErrorToast(error.response.data.message || "Video Upload error");
     } finally {
       setLoading(false);
