@@ -1,7 +1,7 @@
 import {Router} from "express"
 import upload from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
-import { createVideo, getAllVideos } from "../controllers/video.controller.js";
+import { createVideo, getAllVideos, getViews, toggleDisLike, toggleLike, toggleSave } from "../controllers/video.controller.js";
 
 const router = Router();
 
@@ -19,4 +19,9 @@ createVideo
 )
 
 router.route("/get-videos").get(verifyJwt, getAllVideos)
+router.route("/:videoId/toggle-like").put(verifyJwt, toggleLike)
+router.route("/:videoId/toggle-dislike").put(verifyJwt, toggleDisLike)
+router.route("/:videoId/toggle-save").put(verifyJwt, toggleSave)
+router.route("/:videoId/add-view").put( getViews)
 export default router
+
