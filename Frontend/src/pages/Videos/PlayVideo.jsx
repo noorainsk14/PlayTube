@@ -23,6 +23,7 @@ import { serverUrl } from "../../App";
 import { setChannelData } from "../../redux/userSlice";
 import axios from "axios";
 import { showSuccessToast } from "../../helper/toastHelper";
+import { setVideoData } from "../../redux/contentSlice";
 
 const PlayVideo = () => {
   const videoRef = useRef();
@@ -46,6 +47,7 @@ const PlayVideo = () => {
   const dispatch = useDispatch();
   const [isSubscribe, setIsSubscribe] = useState(false);
   const [loading, setLoading] = useState(false);
+  const hasViewed = useRef(false);
 
   useEffect(() => {
     if (!videoData) {
@@ -57,6 +59,34 @@ const PlayVideo = () => {
       setVideo(currentVideo);
       setChannel(currentVideo.channel);
     }
+
+    const addViews = async () => {
+      if (hasViewed.current) return;
+      try {
+        const result = await axios.put(
+          `${serverUrl}/api/v1/video/${videoId}/add-view`,
+          {},
+          { withCredentials: true }
+        );
+        console.log(result.data.data.video);
+        setVideo((prev) =>
+          prev ? { ...prev, views: result.data.data.video.views } : prev
+        );
+        const updatedVideo = result.data.data.video;
+
+        // 🔁 Replace the old video in the videoData array
+        const updatedVideoData = videoData.map((v) =>
+          v._id === videoId ? updatedVideo : v
+        );
+
+        dispatch(setVideoData(updatedVideoData));
+        hasViewed.current = true;
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    };
+
+    addViews();
   }, [videoId, videoData]);
 
   const handleUpdateTime = () => {

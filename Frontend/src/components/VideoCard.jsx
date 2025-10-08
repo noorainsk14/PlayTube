@@ -42,7 +42,7 @@ const VideoCard = ({
             {title}
           </h3>
           <p className="text-xs text-gray-400 mt-1">{channelName}</p>
-          <p className="text-xs text-gray-400">0{views}</p>
+          <p className="text-xs text-gray-400">{views} views</p>
         </div>
       </div>
     </div>
