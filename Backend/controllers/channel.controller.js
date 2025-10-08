@@ -60,7 +60,7 @@ const getChannelData = asyncHandler(async (req, res) => {
   console.log("channel user", userId);
   console.log("User from JWT middleware:", req.user);
 
-  const channel = await Channel.findOne({ owner: userId }).populate("owner");
+  const channel = await Channel.findOne({ owner: userId }).populate("owner").populate("videos").populate("shorts");
 
   if (!channel) {
     throw new ApiError(404, "Channel is not found");
@@ -93,7 +93,7 @@ const updateChannel = asyncHandler(async (req, res) => {
   }
 
   if (category !== undefined) {
-    channel.category = category; // ✅ FIXED: was `description` before
+    channel.category = category;
   }
 
   if (req.files?.avatar) {
@@ -108,7 +108,6 @@ const updateChannel = asyncHandler(async (req, res) => {
 
   const updatedChannel = await channel.save();
 
-  // ✅ Only update user if needed
   const userUpdateData = {};
   if (name) userUpdateData.username = name;
   if (channel.avatar) userUpdateData.avatar = channel.avatar;
@@ -124,5 +123,42 @@ const updateChannel = asyncHandler(async (req, res) => {
     );
 });
 
+const toggleSubscribe = asyncHandler(async(req, res) => {
+  const {channelId} = req.body;
+  const userId = req.user._id;
 
-export { createChannel, getChannelData, updateChannel };
+  if(!channelId) {
+    throw new ApiError(404,"Channel id is required !!")
+  }
+
+  const channel = await Channel.findById(channelId)
+
+  if(!channel){
+    throw new ApiError(404, "channel not found !!")
+  }
+
+  const isSubscribed = channel?.subscribers?.includes(userId)
+
+  if(isSubscribed){
+    channel?.subscribers.pull(userId)
+  }else{
+    channel?.subscribers.push(userId)
+  }
+
+  await channel.save();
+
+  const updatedChannel = await Channel.findById(channelId).populate("owner").populate("videos").populate("shorts")
+
+ return res.status(200).json(
+    new ApiResponse(
+      200,
+      { updatedChannel },
+      isSubscribed
+        ? "Unsubscribed from the channel successfully!"
+        : "Subscribed to the channel successfully!"
+    )
+  );
+})
+
+
+export { createChannel, getChannelData, updateChannel, toggleSubscribe };

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { SiYoutubeshorts } from "react-icons/si";
 import {
@@ -19,12 +19,16 @@ import ShortCard from "../../components/ShortCard";
 import VideoCard from "../../components/VideoCard";
 import IconButton from "../../components/IconButton";
 import Description from "../../components/Description";
+import { serverUrl } from "../../App";
+import { setChannelData } from "../../redux/userSlice";
+import axios from "axios";
+import { showSuccessToast } from "../../helper/toastHelper";
 
 const PlayVideo = () => {
   const videoRef = useRef();
   const { videoId } = useParams();
   const [video, setVideo] = useState(null);
-  const [channel, setChannel] = useState("");
+  const [channel, setChannel] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showControls, setShowControls] = useState(false);
   const { videoData, shortData } = useSelector((state) => state.content);
@@ -35,9 +39,13 @@ const PlayVideo = () => {
   const [vol, setVol] = useState(1);
   const navigate = useNavigate();
   const { userData } = useSelector((state) => state.user);
+  const { channelData } = useSelector((state) => state.user);
   const suggestVideo =
     videoData?.filter((v) => v._id !== videoId).slice(0, 10) || [];
   const suggestShort = shortData?.slice(0, 10) || [];
+  const dispatch = useDispatch();
+  const [isSubscribe, setIsSubscribe] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!videoData) {
@@ -117,12 +125,64 @@ const PlayVideo = () => {
   };
 
   const handleFullScreen = () => {
-    if (!videoRef.current) return;
-
-    if (videoRef.current.requestFullscreen()) {
-      videoRef.current.requestFullscreen();
+    if (videoRef.current) {
+      videoRef.current.requestFullscreen().catch((err) => {
+        console.error("Failed to enter fullscreen:", err);
+      });
     }
   };
+
+  const handleSubscribe = async () => {
+    if (!channel || !channel._id) return;
+
+    setLoading(true);
+
+    try {
+      await Promise.all([
+        axios.post(
+          `${serverUrl}/api/v1/channel/toggle-subscribe`,
+          { channelId: channel._id },
+          { withCredentials: true }
+        ),
+        new Promise((resolve) => setTimeout(resolve, 1000)),
+      ]).then(([result]) => {
+        const updatedChannel = result.data.data.updatedChannel;
+
+        const subscribed = updatedChannel.subscribers.some(
+          (sub) =>
+            sub?._id?.toString() === userData._id.toString() ||
+            sub?.toString() === userData._id.toString()
+        );
+        showSuccessToast(
+          subscribed ? "Subscription added" : "Subscription removed"
+        );
+
+        setChannel(updatedChannel);
+        dispatch(setChannelData(updatedChannel));
+      });
+    } catch (error) {
+      console.error("Subscription error:", error);
+      showErrorToast(
+        error?.response?.data?.message ||
+          error.message ||
+          "Subscription error !!"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (channel?.subscribers && userData?._id) {
+      setIsSubscribe(
+        channel.subscribers.some(
+          (sub) =>
+            sub?._id?.toString() === userData._id.toString() ||
+            sub?.toString() === userData._id.toString()
+        )
+      );
+    }
+  }, [channel?.subscribers, userData?._id]);
 
   return (
     <div className="flex bg-[#0f0f0f] text-white flex-col lg:flex-row gap-6 p-4 lg:p-6">
@@ -246,8 +306,21 @@ const PlayVideo = () => {
               <h1 className="text-md font-bold">{channel?.name}</h1>
               <h3 className="text-[13px]">{channel?.subscribers?.length}</h3>
             </div>
-            <button className="px-[20px] py-[8px] rounded-4xl border border-gray-600 ml-[20px] text-md bg-white text-black hover:bg-orange-600 hover:text-black">
-              Subscribe
+            <button
+              onClick={handleSubscribe}
+              className={`px-[20px] py-[8px] rounded-4xl border border-gray-600 ml-[20px] text-md ${
+                isSubscribe
+                  ? "bg-black text-white  hover:bg-orange-600 hover:text-black "
+                  : "bg-white text-black  hover:bg-orange-600 hover:text-black"
+              }`}
+            >
+              {loading ? (
+                <span className="loading loading-spinner loading-md"></span>
+              ) : isSubscribe ? (
+                "Subscribed"
+              ) : (
+                "Subscribe"
+              )}
             </button>
           </div>
           <div className="flex items-center gap-6 mt-3">
@@ -305,7 +378,7 @@ const PlayVideo = () => {
           Shorts
         </h2>
         <div className="flex gap-3 overflow-x-auto custom-scrollbar pb-3">
-          {console.log("suggestShort:", suggestShort)}
+          {/* {console.log("suggestShort:", suggestShort)} */}
           {suggestShort?.map((short) => (
             <div key={short._id}>
               <ShortCard

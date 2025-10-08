@@ -5,6 +5,7 @@ import { verifyJwt } from "../middlewares/auth.middleware.js";
 import {
   createChannel,
   getChannelData,
+  toggleSubscribe,
   updateChannel,
 } from "../controllers/channel.controller.js";
 
@@ -43,5 +44,7 @@ router.route("/update-channel").patch(
 
   updateChannel
 );
+
+router.route("/toggle-subscribe").post(verifyJwt, toggleSubscribe)
 
 export default router;
