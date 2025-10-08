@@ -5,6 +5,8 @@
 
 * {
   font-family: "Roboto", sans-serif;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .custom-scrollbar {

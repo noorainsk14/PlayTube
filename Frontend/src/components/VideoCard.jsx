@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const VideoCard = ({
   thumbnail,
@@ -10,8 +11,14 @@ const VideoCard = ({
   views,
   id,
 }) => {
+  const navigate = useNavigate();
   return (
-    <div className="w-[360] cursor-pointer">
+    <div
+      className="w-[360] cursor-pointer"
+      onClick={() => {
+        navigate(`/play-video/${id}`);
+      }}
+    >
       <div className="relative">
         <img
           src={thumbnail}

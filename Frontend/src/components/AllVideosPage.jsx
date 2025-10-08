@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { createSelector } from "@reduxjs/toolkit";
 import VideoCard from "./VideoCard";
+
+const selectVideoData = createSelector(
+  (state) => state.content?.videoData,
+  (videoData) => videoData ?? []
+);
 
 const getVideoDuration = (url, callback) => {
   const video = document.createElement("video");
@@ -18,8 +24,8 @@ const getVideoDuration = (url, callback) => {
 };
 
 const AllVideosPage = () => {
-  const videoData = useSelector((state) => state.content?.videoData || []);
-  const [duration, setDuration] = useState("");
+  const videoData = useSelector(selectVideoData);
+  const [duration, setDuration] = useState({});
 
   useEffect(() => {
     if (Array.isArray(videoData) && videoData.length > 0) {
@@ -40,6 +46,7 @@ const AllVideosPage = () => {
           title={video?.title}
           channelLogo={video?.channel?.avatar}
           channelName={video?.channel?.name}
+          id={video._id}
         />
       ))}
     </div>
