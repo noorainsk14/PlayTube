@@ -53,10 +53,11 @@ const PlayVideo = () => {
     if (!videoData) {
       return;
     }
-    const currentVideo = videoData?.find((v) => v._id === videoId);
+    const currentVideo = videoData.find((v) => v._id.toString() === videoId);
 
     if (currentVideo) {
       setVideo(currentVideo);
+
       setChannel(currentVideo.channel);
     }
 
@@ -68,7 +69,6 @@ const PlayVideo = () => {
           {},
           { withCredentials: true }
         );
-        console.log(result.data.data.video);
         setVideo((prev) =>
           prev ? { ...prev, views: result.data.data.video.views } : prev
         );
@@ -163,6 +163,8 @@ const PlayVideo = () => {
   };
 
   const handleSubscribe = async () => {
+    console.log(channel);
+
     if (!channel || !channel._id) return;
 
     setLoading(true);
@@ -174,7 +176,7 @@ const PlayVideo = () => {
           { channelId: channel._id },
           { withCredentials: true }
         ),
-        new Promise((resolve) => setTimeout(resolve, 1000)),
+        new Promise((resolve) => setTimeout(resolve, 800)),
       ]).then(([result]) => {
         const updatedChannel = result.data.data.updatedChannel;
 
@@ -199,6 +201,47 @@ const PlayVideo = () => {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const toggleLiked = async () => {
+    try {
+      const result = await axios.put(
+        `${serverUrl}/api/v1/video/${videoId}/toggle-like`,
+        {},
+        { withCredentials: true }
+      );
+      console.log(result.data.data.video);
+      setVideo(result.data.data.video);
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  };
+
+  const toggleDisLiked = async () => {
+    try {
+      const result = await axios.put(
+        `${serverUrl}/api/v1/video/${videoId}/toggle-dislike`,
+        {},
+        { withCredentials: true }
+      );
+      console.log(result.data.data.video);
+      setVideo(result.data.data.video);
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  };
+
+  const toggleSave = async () => {
+    try {
+      const result = await axios.put(
+        `${serverUrl}/api/v1/video/${videoId}/toggle-save`,
+        {},
+        { withCredentials: true }
+      );
+      setVideo(result.data.data.video);
+    } catch (error) {
+      console.log(error.response.data.message);
     }
   };
 
@@ -358,13 +401,15 @@ const PlayVideo = () => {
               icon={FaThumbsUp}
               label={"Likes"}
               active={video?.likes?.includes(userData._id)}
-              count={video?.likes.length}
+              count={video?.likes?.length}
+              onClick={toggleLiked}
             />
             <IconButton
               icon={FaThumbsDown}
               label={"Dislikes"}
-              active={video?.dislike?.includes(userData._id)}
-              count={video?.dislike?.length}
+              active={video?.disLikes?.includes(userData._id)}
+              count={video?.disLikes?.length}
+              onClick={toggleDisLiked}
             />
             <IconButton
               icon={FaDownload}
@@ -379,7 +424,8 @@ const PlayVideo = () => {
             <IconButton
               icon={FaBookmark}
               label={"Save"}
-              active={video?.saveBy?.includes(userData._id)}
+              active={video?.savedBy?.includes(userData._id)}
+              onClick={toggleSave}
             />
           </div>
         </div>

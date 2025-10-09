@@ -74,11 +74,11 @@ const toggleLike = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   const userId = req.user?._id;
 
-   if (!mongoose.Types.ObjectId.isValid(videoId)) {
+  if (!mongoose.Types.ObjectId.isValid(videoId)) {
     throw new ApiError(400, "Invalid videoId");
   }
 
-  const video = await Video.findById(videoId);
+  const video = await Video.findById(videoId).populate("channel");
 
   if (!video) {
     throw new ApiError(404, "video not found !!");
@@ -114,12 +114,11 @@ const toggleDisLike = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   const userId = req.user?._id;
 
-   if (!mongoose.Types.ObjectId.isValid(videoId)) {
+  if (!mongoose.Types.ObjectId.isValid(videoId)) {
     throw new ApiError(400, "Invalid videoId");
   }
 
-  const video = await Video.findById(videoId);
-
+  const video = await Video.findById(videoId).populate("channel");
   if (!video) {
     throw new ApiError(404, "video not found !!");
   }
@@ -150,30 +149,28 @@ const toggleDisLike = asyncHandler(async (req, res) => {
     );
 });
 
-const toggleSave = asyncHandler(async( req, res) => {
+const toggleSave = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   const userId = req.user?._id;
 
-   if (!mongoose.Types.ObjectId.isValid(videoId)) {
+  if (!mongoose.Types.ObjectId.isValid(videoId)) {
     throw new ApiError(400, "Invalid videoId");
   }
 
-  const video = await Video.findById(videoId);
+  const video = await Video.findById(videoId).populate("channel");
 
   if (!video) {
     throw new ApiError(404, "video not found !!");
   }
 
-  let isSaved = false
-
+  let isSaved = false;
 
   if (video.savedBy.includes(userId)) {
     video.savedBy.pull(userId);
-    isSaved = false
+    isSaved = false;
   } else {
     video.savedBy.push(userId);
-    isSaved = true
-    
+    isSaved = true;
   }
 
   await video.save();
@@ -185,29 +182,93 @@ const toggleSave = asyncHandler(async( req, res) => {
         200,
         { video },
         isSaved ? "Video saved !!" : "Video removed from saved list !!"
-
       )
     );
-})
+});
 
-const getViews = asyncHandler(async(req, res) =>{
-  const {videoId} = req.params
+const getViews = asyncHandler(async (req, res) => {
+  const { videoId } = req.params;
 
-   if (!mongoose.Types.ObjectId.isValid(videoId)) {
+  if (!mongoose.Types.ObjectId.isValid(videoId)) {
     throw new ApiError(400, "Invalid videoId");
   }
 
-  const video = await Video.findByIdAndUpdate(videoId, {
-    $inc:{views : 1}
-  }, {new:true})
+  const video = await Video.findByIdAndUpdate(
+    videoId,
+    {
+      $inc: { views: 1 },
+    },
+    { new: true }
+  ).populate("channel");
 
-  if(!video){
-    throw new ApiError(404, "Video not found !!")
+  if (!video) {
+    throw new ApiError(404, "Video not found !!");
   }
 
-  return res.status(200).json(
-    new ApiResponse(200, {video}, "View added !!")
+  return res
+  .status(200)
+  .json(
+    new ApiResponse(200, { video }, "View added !!"));
+});
+
+const addComment = asyncHandler(async(req, res) => {
+  const {videoId} = req.params;
+  const {message} = req.body;
+  const userId = req.user?._id
+
+  const video = await Video.findById(videoId)
+  if(!video){
+    throw new ApiError(400, "Video not found !")
+  }
+
+  video.comments.push({
+    author: userId,
+    message
+  })
+
+  await video.save()
+
+  return res.status(201).json(
+     new ApiResponse(201, {video}, "Comment added !!")
   )
 })
 
-export { createVideo, getAllVideos, toggleLike, toggleDisLike, toggleSave, getViews };
+const addReply = asyncHandler(async(req, res) => {
+  const {videoId, commentId} = req.params;
+  const {message} = req.body;
+  const userId = req.user?._id
+
+  const video = await Video.findById(videoId)
+  if(!video){
+    throw new ApiError(400, "Video not found !")
+  }
+
+  const comment = await  video.comments.id(commentId)
+  if(!comment){
+    throw new ApiError(404, "Comment not found !")
+  }
+
+  comment.replies.push({author:userId, message})
+
+  await video.save()
+
+  return res
+  .status(201)
+  .json(
+    new ApiResponse(201,{video},"Reply added !!")
+  )
+
+
+
+})
+
+export {
+  createVideo,
+  getAllVideos,
+  toggleLike,
+  toggleDisLike,
+  toggleSave,
+  getViews,
+  addComment,
+  addReply
+};
