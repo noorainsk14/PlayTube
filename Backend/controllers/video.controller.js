@@ -59,7 +59,7 @@ const createVideo = asyncHandler(async (req, res) => {
 });
 
 const getAllVideos = asyncHandler(async (req, res) => {
-  const videos = await Video.find().sort({ createdAt: -1 }).populate("channel");
+  const videos = await Video.find().sort({ createdAt: -1 }).populate("channel comments.author comments.replies.author");
 
   if (!videos) {
     throw new ApiError(400, "Videos are not found !!");
@@ -221,15 +221,18 @@ const addComment = asyncHandler(async(req, res) => {
     throw new ApiError(400, "Video not found !")
   }
 
-  video.comments.push({
+  video?.comments.push({
     author: userId,
     message
   })
 
-  await video.save()
+  video.save();
+
+  const populatedVideo = await Video.findById(videoId).populate({path: "comments.author", select : "username avatar email"}).populate({path: "comments.replies.author", select: "usename avatar email"})
+  
 
   return res.status(201).json(
-     new ApiResponse(201, {video}, "Comment added !!")
+     new ApiResponse(201, {populatedVideo}, "Comment added !!")
   )
 })
 
@@ -252,10 +255,12 @@ const addReply = asyncHandler(async(req, res) => {
 
   await video.save()
 
+  const populatedVideo = await Video.findById(videoId).populate({path: "comments.author", select : "username avatar email"}).populate({path: "comments.replies.author", select: "usename avatar email"})
+
   return res
   .status(201)
   .json(
-    new ApiResponse(201,{video},"Reply added !!")
+    new ApiResponse(201,{populatedVideo},"Reply added !!")
   )
 
 

@@ -24,6 +24,6 @@ router.route("/:videoId/toggle-dislike").put(verifyJwt, toggleDisLike)
 router.route("/:videoId/toggle-save").put(verifyJwt, toggleSave)
 router.route("/:videoId/add-view").put( getViews)
 router.route("/:videoId/add-comment").post(verifyJwt, addComment)
-router.route("/:videoId/:commentId").post(verifyJwt, addComment)
+router.route("/:videoId/:commentId/add-reply").post(verifyJwt, addComment)
 export default router
 

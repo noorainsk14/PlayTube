@@ -38,6 +38,8 @@ const PlayVideo = () => {
   const [duration, setDuration] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [vol, setVol] = useState(1);
+  const [comment, setComment] = useState([]);
+  const [newComment, setNewComment] = useState("");
   const navigate = useNavigate();
   const { userData } = useSelector((state) => state.user);
   const { channelData } = useSelector((state) => state.user);
@@ -47,6 +49,8 @@ const PlayVideo = () => {
   const dispatch = useDispatch();
   const [isSubscribe, setIsSubscribe] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
+  const [loading2, setLoading2] = useState(false);
   const hasViewed = useRef(false);
 
   useEffect(() => {
@@ -59,6 +63,7 @@ const PlayVideo = () => {
       setVideo(currentVideo);
 
       setChannel(currentVideo.channel);
+      setComment(currentVideo.comments);
     }
 
     const addViews = async () => {
@@ -163,35 +168,31 @@ const PlayVideo = () => {
   };
 
   const handleSubscribe = async () => {
-    console.log(channel);
-
     if (!channel || !channel._id) return;
 
     setLoading(true);
 
     try {
-      await Promise.all([
-        axios.post(
-          `${serverUrl}/api/v1/channel/toggle-subscribe`,
-          { channelId: channel._id },
-          { withCredentials: true }
-        ),
-        new Promise((resolve) => setTimeout(resolve, 800)),
-      ]).then(([result]) => {
-        const updatedChannel = result.data.data.updatedChannel;
+      const response = await axios.post(
+        `${serverUrl}/api/v1/channel/toggle-subscribe`,
+        { channelId: channel._id },
+        { withCredentials: true }
+      );
 
-        const subscribed = updatedChannel.subscribers.some(
-          (sub) =>
-            sub?._id?.toString() === userData._id.toString() ||
-            sub?.toString() === userData._id.toString()
-        );
-        showSuccessToast(
-          subscribed ? "Subscription added" : "Subscription removed"
-        );
+      const updatedChannel = response.data.data.updatedChannel;
 
-        setChannel(updatedChannel);
-        dispatch(setChannelData(updatedChannel));
-      });
+      const subscribed = updatedChannel.subscribers.some(
+        (sub) =>
+          sub?._id?.toString() === userData._id.toString() ||
+          sub?.toString() === userData._id.toString()
+      );
+
+      showSuccessToast(
+        subscribed ? "Subscription added" : "Subscription removed"
+      );
+
+      setChannel(updatedChannel);
+      dispatch(setChannelData(updatedChannel));
     } catch (error) {
       console.error("Subscription error:", error);
       showErrorToast(
@@ -200,7 +201,10 @@ const PlayVideo = () => {
           "Subscription error !!"
       );
     } finally {
-      setLoading(false);
+      // Add 800ms delay before setting loading to false
+      setTimeout(() => {
+        setLoading(false);
+      }, 800);
     }
   };
 
@@ -242,6 +246,52 @@ const PlayVideo = () => {
       setVideo(result.data.data.video);
     } catch (error) {
       console.log(error.response.data.message);
+    }
+  };
+
+  const handleAddComment = async () => {
+    if (!newComment) {
+      return;
+    }
+    setLoading1(true);
+
+    try {
+      const result = await axios.post(
+        `${serverUrl}/api/v1/video/${videoId}/add-comment`,
+        { message: newComment },
+        { withCredentials: true }
+      );
+      console.log(result.data.data.video.comments);
+
+      setComment(result.data.data.video.comments);
+      setNewComment("");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setTimeout(() => {
+        setLoading1(false);
+      }, 800);
+    }
+  };
+
+  const handleReply = async ({ commentId, replyText }) => {
+    setLoading2(true);
+    if (!replyText) {
+      return;
+    }
+
+    try {
+      const result = await axios.post(
+        `${serverUrl}/api/v1/video/${videoId}/${commentId}/add-reply`,
+        { message: replyText },
+        { withCredentials: true }
+      );
+      console.log(result.data?.data?.populatedVideo?.comments);
+      //setComment(result.data?.comment)
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading2(false);
     }
   };
 
@@ -380,6 +430,7 @@ const PlayVideo = () => {
               <h3 className="text-[13px]">{channel?.subscribers?.length}</h3>
             </div>
             <button
+              style={{ minWidth: "120px" }}
               onClick={handleSubscribe}
               className={`px-[20px] py-[8px] rounded-4xl border border-gray-600 ml-[20px] text-md ${
                 isSubscribe
@@ -440,10 +491,55 @@ const PlayVideo = () => {
               type="text"
               placeholder="Add a comment..."
               className="flex-1 border border-gray-700 bg-[#1a1a1a] text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-orange-600"
+              onChange={(e) => {
+                setNewComment(e.target.value);
+              }}
+              value={newComment}
             />
-            <button className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg">
-              Post
+            <button
+              disabled={loading1}
+              onClick={handleAddComment}
+              className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg"
+            >
+              {loading1 ? (
+                <span className="loading loading-spinner loading-md"></span>
+              ) : (
+                "Post"
+              )}
             </button>
+          </div>
+          <div className="space-y-3">
+            {comment.map((comment) => (
+              <div
+                key={comment._id}
+                className="p-3 bg-[#1a1a1a] rounded-lg shadow-sm text-sm"
+              >
+                <div className="flex items-center justify-start gap-1">
+                  <img
+                    className="w-16 h-16 rounded-full object-cover"
+                    src={comment?.author?.avatar}
+                    alt="avatar"
+                  />
+                  <div className="flex flex-col w-full">
+                    <h2 className="text-xl font-semibold pl-4 pt-4 mt-4">
+                      @{comment?.author?.username}
+                    </h2>
+                    <p className="font-lg text-2xl px-[20px] py-[20px] pl-8">
+                      {comment?.message}
+                    </p>
+
+                    <div className="ml-4 mt-2 space-y-2">
+                      {comment?.replies.map((reply) => (
+                        <div key={reply._id} className="">
+                          <p>{reply?.message}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <ReplyComment comment={comment} handleReply={handleReply} />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -500,4 +596,45 @@ const PlayVideo = () => {
   );
 };
 
+const ReplyComment = ({ comment, handleReply }) => {
+  const [replyText, setReplyText] = useState("");
+  const [showReplyInput, setShowReplyInput] = useState(false);
+  return (
+    <div className="mt-3 w-full px-4">
+      {showReplyInput && (
+        <div className="w-full flex flex-col sm:flex-row sm:items-center gap-2 pl-20 pr-4">
+          <input
+            onChange={(e) => {
+              setReplyText(e.target.value);
+            }}
+            type="text"
+            placeholder="Add a reply"
+            name="reply"
+            id="reply"
+            className="flex-1 mb-4 border border-gray-700 bg-[#1a1a1a] text-white rounded-lg px-2 py-2 focus:outline-none focus:ring-1 focus:ring-orange-600 text-sm"
+          />
+          <button
+            className="bg-orange-600 mb-4 hover:bg-orange-700 text-white px-4 py-2 rounded-lg whitespace-nowrap"
+            onClick={() => {
+              handleReply({ commentId: comment._id, replyText: replyText });
+              setShowReplyInput(false);
+              setReplyText("");
+            }}
+          >
+            Reply
+          </button>
+        </div>
+      )}
+
+      <button
+        onClick={() => {
+          setShowReplyInput(!showReplyInput);
+        }}
+        className="ml-4 text-2xl text-gray-400 mt-1 hover:bg-gray-400  hover:text-black rounded-full w-19 p-2 cursor-pointer hover:underline"
+      >
+        reply
+      </button>
+    </div>
+  );
+};
 export default PlayVideo;
