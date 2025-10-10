@@ -261,9 +261,11 @@ const PlayVideo = () => {
         { message: newComment },
         { withCredentials: true }
       );
-      console.log(result.data.data.video.comments);
-
-      setComment(result.data.data.video.comments);
+      console.log(result.data?.data?.video?.comments);
+      setComment((prev) => [
+        result.data?.data?.video?.comments.slice(-1)[0],
+        ...prev,
+      ]);
       setNewComment("");
     } catch (error) {
       console.log(error);
@@ -277,6 +279,7 @@ const PlayVideo = () => {
   const handleReply = async ({ commentId, replyText }) => {
     setLoading2(true);
     if (!replyText) {
+      setLoading2(false);
       return;
     }
 
@@ -287,11 +290,14 @@ const PlayVideo = () => {
         { withCredentials: true }
       );
       console.log(result.data?.data?.populatedVideo?.comments);
-      //setComment(result.data?.comment)
+      const updatedComments = result.data?.data?.populatedVideo?.comments;
+      setComment(updatedComments);
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading2(false);
+      setTimeout(() => {
+        setLoading2(false);
+      }, 1000);
     }
   };
 
@@ -508,34 +514,52 @@ const PlayVideo = () => {
               )}
             </button>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
             {comment.map((comment) => (
               <div
                 key={comment._id}
                 className="p-3 bg-[#1a1a1a] rounded-lg shadow-sm text-sm"
               >
-                <div className="flex items-center justify-start gap-1">
+                <div className="flex items-start justify-start gap-3">
                   <img
-                    className="w-16 h-16 rounded-full object-cover"
+                    className="w-8 h-8 mt-8 ml-4  rounded-full object-cover"
                     src={comment?.author?.avatar}
                     alt="avatar"
                   />
                   <div className="flex flex-col w-full">
-                    <h2 className="text-xl font-semibold pl-4 pt-4 mt-4">
+                    <h2 className="text-lg font-semibold pl-1 pt-4 mt-4">
                       @{comment?.author?.username}
                     </h2>
-                    <p className="font-lg text-2xl px-[20px] py-[20px] pl-8">
+                    <p className="font-lg px-[20px] py-[20px] pb-0 pl-8">
                       {comment?.message}
                     </p>
 
-                    <div className="ml-4 mt-2 space-y-2">
+                    <ReplyComment
+                      loading2={loading2}
+                      comment={comment}
+                      handleReply={handleReply}
+                    />
+
+                    <div className="ml-4 mt-2 space-y-2 max-h-[300px] overflow-y-auto pr-2">
                       {comment?.replies.map((reply) => (
-                        <div key={reply._id} className="">
-                          <p>{reply?.message}</p>
+                        <div
+                          key={reply._id}
+                          className="p-2 bg-[#2a2a2a] rounded "
+                        >
+                          <div className="flex items-center justify-start gap-1 pb-2">
+                            <img
+                              src={reply?.author?.avatar}
+                              alt="avatar"
+                              className="w-8 h-8 rounded-full object-cover"
+                            />
+                            <h2 className="text-[14pxpx]">
+                              @{reply?.author?.username}
+                            </h2>
+                          </div>
+                          <p className="pt-3 pl-6  ">{reply?.message}</p>
                         </div>
                       ))}
                     </div>
-                    <ReplyComment comment={comment} handleReply={handleReply} />
                   </div>
                 </div>
               </div>
@@ -596,7 +620,7 @@ const PlayVideo = () => {
   );
 };
 
-const ReplyComment = ({ comment, handleReply }) => {
+const ReplyComment = ({ comment, handleReply, loading2 }) => {
   const [replyText, setReplyText] = useState("");
   const [showReplyInput, setShowReplyInput] = useState(false);
   return (
@@ -611,17 +635,24 @@ const ReplyComment = ({ comment, handleReply }) => {
             placeholder="Add a reply"
             name="reply"
             id="reply"
-            className="flex-1 mb-4 border border-gray-700 bg-[#1a1a1a] text-white rounded-lg px-2 py-2 focus:outline-none focus:ring-1 focus:ring-orange-600 text-sm"
+            className="flex-1  mb-4 border border-gray-700 bg-[#1a1a1a] text-white rounded-lg px-2 py-2 focus:outline-none focus:ring-1 focus:ring-orange-600 "
           />
           <button
-            className="bg-orange-600 mb-4 hover:bg-orange-700 text-white px-4 py-2 rounded-lg whitespace-nowrap"
+            className="bg-orange-600 mb-4 hover:bg-orange-700 text-white px-4 py-2 rounded-lg whitespace-nowrap "
             onClick={() => {
               handleReply({ commentId: comment._id, replyText: replyText });
-              setShowReplyInput(false);
+              setTimeout(() => {
+                setShowReplyInput(false);
+              }, 1000);
+
               setReplyText("");
             }}
           >
-            Reply
+            {loading2 ? (
+              <span className="loading loading-spinner loading-md text-white"></span>
+            ) : (
+              "Reply"
+            )}
           </button>
         </div>
       )}
@@ -630,7 +661,7 @@ const ReplyComment = ({ comment, handleReply }) => {
         onClick={() => {
           setShowReplyInput(!showReplyInput);
         }}
-        className="ml-4 text-2xl text-gray-400 mt-1 hover:bg-gray-400  hover:text-black rounded-full w-19 p-2 cursor-pointer hover:underline"
+        className="ml-4 pt-0 text-gray-400  hover:bg-gray-400  hover:text-black rounded-xl w-10  cursor-pointer hover:underline"
       >
         reply
       </button>

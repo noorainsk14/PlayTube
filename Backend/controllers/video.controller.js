@@ -226,13 +226,13 @@ const addComment = asyncHandler(async(req, res) => {
     message
   })
 
-  video.save();
+ await video.save();
 
-  const populatedVideo = await Video.findById(videoId).populate({path: "comments.author", select : "username avatar email"}).populate({path: "comments.replies.author", select: "usename avatar email"})
+  const populatedVideo = await Video.findById(videoId).populate({path: "comments.author", select : "username avatar email"}).populate({path: "comments.replies.author", select: "username avatar email"})
   
 
   return res.status(201).json(
-     new ApiResponse(201, {populatedVideo}, "Comment added !!")
+     new ApiResponse(201, { video: populatedVideo }, "Comment added !!")
   )
 })
 
@@ -247,6 +247,7 @@ const addReply = asyncHandler(async(req, res) => {
   }
 
   const comment = await  video.comments.id(commentId)
+  console.log("comment =",comment)
   if(!comment){
     throw new ApiError(404, "Comment not found !")
   }
@@ -255,7 +256,7 @@ const addReply = asyncHandler(async(req, res) => {
 
   await video.save()
 
-  const populatedVideo = await Video.findById(videoId).populate({path: "comments.author", select : "username avatar email"}).populate({path: "comments.replies.author", select: "usename avatar email"})
+  const populatedVideo = await Video.findById(videoId).populate({path: "comments.author", select : "username avatar email"}).populate({path: "comments.replies.author", select: "username avatar email"})
 
   return res
   .status(201)
