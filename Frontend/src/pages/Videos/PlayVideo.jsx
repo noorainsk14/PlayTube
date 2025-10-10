@@ -53,46 +53,74 @@ const PlayVideo = () => {
   const [loading2, setLoading2] = useState(false);
   const hasViewed = useRef(false);
 
+  // useEffect(() => {
+  //   if (!videoData) {
+  //     return;
+  //   }
+  //   const currentVideo = videoData.find((v) => v._id.toString() === videoId);
+
+  //   if (currentVideo) {
+  //     setVideo(currentVideo);
+
+  //     setChannel(currentVideo.channel);
+  //     setComment(currentVideo.comments);
+  //   }
+
+  //   const addViews = async () => {
+  //     if (hasViewed.current) return;
+  //     try {
+  //       const result = await axios.put(
+  //         `${serverUrl}/api/v1/video/${videoId}/add-view`,
+  //         {},
+  //         { withCredentials: true }
+  //       );
+  //       setVideo((prev) =>
+  //         prev ? { ...prev, views: result.data.data.video.views } : prev
+  //       );
+  //       const updatedVideo = result.data.data.video;
+
+  //       // 🔁 Replace the old video in the videoData array
+  //       const updatedVideoData = videoData.map((v) =>
+  //         v._id === videoId ? updatedVideo : v
+  //       );
+
+  //       dispatch(setVideoData(updatedVideoData));
+  //       hasViewed.current = true;
+  //     } catch (error) {
+  //       console.log(error.response.data.message);
+  //     }
+  //   };
+
+  //   addViews();
+  // }, [videoId, videoData]);
+
   useEffect(() => {
-    if (!videoData) {
-      return;
-    }
-    const currentVideo = videoData.find((v) => v._id.toString() === videoId);
-
-    if (currentVideo) {
-      setVideo(currentVideo);
-
-      setChannel(currentVideo.channel);
-      setComment(currentVideo.comments);
-    }
-
-    const addViews = async () => {
-      if (hasViewed.current) return;
+    const fetchVideo = async () => {
       try {
-        const result = await axios.put(
-          `${serverUrl}/api/v1/video/${videoId}/add-view`,
-          {},
-          { withCredentials: true }
-        );
-        setVideo((prev) =>
-          prev ? { ...prev, views: result.data.data.video.views } : prev
-        );
-        const updatedVideo = result.data.data.video;
+        const res = await axios.get(`${serverUrl}/api/v1/video/${videoId}`, {
+          withCredentials: true,
+        });
 
-        // 🔁 Replace the old video in the videoData array
-        const updatedVideoData = videoData.map((v) =>
-          v._id === videoId ? updatedVideo : v
-        );
+        const fullVideo = res.data.data.video;
 
-        dispatch(setVideoData(updatedVideoData));
-        hasViewed.current = true;
+        setVideo(fullVideo);
+        setChannel(fullVideo.channel);
+        setComment(fullVideo.comments);
+
+        // Optional: update Redux with latest video data
+        const updatedVideoData = videoData?.map((v) =>
+          v._id === fullVideo._id ? fullVideo : v
+        );
+        if (updatedVideoData) {
+          dispatch(setVideoData(updatedVideoData));
+        }
       } catch (error) {
-        console.log(error.response.data.message);
+        console.error("Error fetching video:", error);
       }
     };
 
-    addViews();
-  }, [videoId, videoData]);
+    fetchVideo();
+  }, [videoId]);
 
   const handleUpdateTime = () => {
     if (!videoRef.current) return;

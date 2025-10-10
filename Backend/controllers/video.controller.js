@@ -268,6 +268,30 @@ const addReply = asyncHandler(async(req, res) => {
 
 })
 
+const getVideoById = asyncHandler(async (req, res) => {
+  const { videoId } = req.params;
+
+  const video = await Video.findById(videoId)
+    .populate("channel", "name avatar subscribers")
+    .populate({
+      path: "comments.author",
+      select: "username avatar email",
+    })
+    .populate({
+      path: "comments.replies.author",
+      select: "username avatar email",
+    });
+
+  if (!video) {
+    throw new ApiError(404, "Video not found!");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { video }, "Video fetched successfully"));
+});
+
+
 export {
   createVideo,
   getAllVideos,
@@ -276,5 +300,6 @@ export {
   toggleSave,
   getViews,
   addComment,
-  addReply
+  addReply,
+  getVideoById
 };
