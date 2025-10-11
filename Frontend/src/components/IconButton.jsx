@@ -2,7 +2,10 @@ import React from "react";
 
 const IconButton = ({ icon: Icon, active, label, count, onClick }) => {
   return (
-    <button className="flex flex-col items-center" onClick={onClick}>
+    <button
+      className="flex flex-col items-center cursor-pointer"
+      onClick={onClick}
+    >
       <div
         className={`${
           active ? "bg-white" : "bg-[#00000065] border border-gray-700"

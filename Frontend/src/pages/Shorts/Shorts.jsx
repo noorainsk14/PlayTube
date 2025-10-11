@@ -16,33 +16,48 @@ import {
   FaDownload,
   FaBookmark,
   FaComment,
+  FaArrowDown,
 } from "react-icons/fa";
 import Description from "../../components/Description";
 import IconButton from "../../components/IconButton";
+import { serverUrl } from "../../App.jsx";
+import axios from "axios";
 
 const Shorts = () => {
   const { shortData } = useSelector((state) => state.content);
   const { userData } = useSelector((state) => state.user);
+
   const [shortList, setShortList] = useState([]);
   const shortRef = useRef([]);
   const [playIndex, setPlayIndex] = useState(null);
+  const [openComment, setOpenComment] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [viewedShort, setViewedShort] = useState([]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        const index = Number(entry.target.dataset.index);
-        const video = shortRef.current[index];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const index = Number(entry.target.dataset.index);
+          const video = shortRef.current[index];
 
-        if (video) {
-          if (entry.isIntersecting) {
-            (video.muted = false), video.play();
-          } else {
-            video.muted = true;
-            video.pause();
+          if (video) {
+            if (entry.isIntersecting) {
+              (video.muted = false), video.play();
+              const currentShortId = shortList[index]._id;
+              if (!viewedShort.includes(currentShortId)) {
+                handleAddView(currentShortId);
+                setViewedShort((prev) => [...prev, currentShortId]);
+              }
+            } else {
+              video.muted = true;
+              video.pause();
+            }
           }
-        }
-      });
-    });
+        });
+      },
+      { threshold: 0.7 }
+    );
 
     shortRef.current.forEach((video) => {
       if (video) {
@@ -64,6 +79,101 @@ const Shorts = () => {
         video.pause();
         setPlayIndex(index);
       }
+    }
+  };
+
+  const handlSsubscribe = async (channelId) => {
+    setLoading(true);
+    try {
+      const result = await axios.post(
+        `${serverUrl}/api/v1/channel/toggle-subscribe`,
+        { channelId },
+        { withCredentials: true }
+      );
+      console.log(result.data);
+      const updatedChannel = result.data?.data?.updatedChannel;
+      setShortList((prev) =>
+        prev.map((short) =>
+          short?.channel?._id === channelId
+            ? { ...short, channel: updatedChannel }
+            : short
+        )
+      );
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 700);
+    }
+  };
+
+  const toggleLike = async (shortId) => {
+    try {
+      const result = await axios.put(
+        `${serverUrl}/api/v1/short/${shortId}/toggle-like`,
+        {},
+        { withCredentials: true }
+      );
+      console.log(result.data?.data?.short);
+      const updatedShort = result.data?.data?.short;
+      setShortList((prev) =>
+        prev.map((short) =>
+          short?._id === updatedShort._id ? updatedShort : short
+        )
+      );
+    } catch (error) {
+      console.log(error.response?.data?.message);
+    }
+  };
+
+  const toggleDisLike = async (shortId) => {
+    try {
+      const result = await axios.put(
+        `${serverUrl}/api/v1/short/${shortId}/toggle-dislike`,
+        {},
+        { withCredentials: true }
+      );
+      console.log(result.data?.data?.short);
+      const updatedShort = result.data?.data?.short;
+      setShortList((prev) =>
+        prev.map((short) =>
+          short?._id === updatedShort._id ? updatedShort : short
+        )
+      );
+    } catch (error) {
+      console.log(error.response?.data?.message);
+    }
+  };
+
+  const toggleSave = async (shortId) => {
+    try {
+      const result = await axios.put(
+        `${serverUrl}/api/v1/short/${shortId}/toggle-save`,
+        {},
+        { withCredentials: true }
+      );
+      console.log(result.data?.data?.short);
+      const updatedShort = result.data?.data?.short;
+      setShortList((prev) =>
+        prev.map((short) =>
+          short?._id === updatedShort._id ? updatedShort : short
+        )
+      );
+    } catch (error) {
+      console.log(error.response?.data?.message);
+    }
+  };
+
+  const handleAddView = async (shortId) => {
+    try {
+      await axios.put(
+        `${serverUrl}/api/v1/short/${shortId}/add-view`,
+        {},
+        { withCredentials: true }
+      );
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -118,10 +228,28 @@ const Shorts = () => {
                   className="w-8 h-8 rounded-full border-1 border-gray-700 "
                 />
                 <span className="text-sm text-gray-300">
-                  @{short?.channel?.name.toLowerCase()}
+                  @{short?.channel?.name?.toLowerCase()}
                 </span>
-                <button className="bg-white text-black text-xs px-[10px] py-[10px] rounded-full cursor-pointer">
-                  Subscribe
+                <button
+                  style={{ minWidth: "80px" }}
+                  className={`
+                    ${
+                      short?.channel?.subscribers?.includes(userData?._id)
+                        ? "bg-[#000000a1] text-white border-1 border-gray-700"
+                        : "bg-white text-black"
+                    }
+                   text-xs px-[10px] py-[10px] rounded-full cursor-pointer`}
+                  onClick={() => {
+                    handlSsubscribe(short?.channel?._id);
+                  }}
+                >
+                  {loading ? (
+                    <span className="loading loading-spinner loading-xs"></span>
+                  ) : short?.channel?.subscribers?.includes(userData?._id) ? (
+                    "Subscribed"
+                  ) : (
+                    "Subscribe"
+                  )}
                 </button>
               </div>
               <div className="flex items-center justify-start">
@@ -149,14 +277,26 @@ const Shorts = () => {
                   label={"Likes"}
                   active={short?.likes?.includes(userData._id)}
                   count={short?.likes?.length}
+                  onClick={() => {
+                    toggleLike(short?._id);
+                  }}
                 />
                 <IconButton
                   icon={FaThumbsDown}
                   label={"Dislikes"}
                   active={short?.disLikes?.includes(userData._id)}
                   count={short?.disLikes?.length}
+                  onClick={() => {
+                    toggleDisLike(short?._id);
+                  }}
                 />
-                <IconButton icon={FaComment} label={"Comment"} />
+                <IconButton
+                  icon={FaComment}
+                  label={"Comment"}
+                  onClick={() => {
+                    setOpenComment(!openComment);
+                  }}
+                />
                 <IconButton
                   icon={FaDownload}
                   label={"Download"}
@@ -172,9 +312,37 @@ const Shorts = () => {
                   icon={FaBookmark}
                   label={"Save"}
                   active={short?.savedBy?.includes(userData._id)}
+                  onClick={() => {
+                    toggleSave(short?._id);
+                  }}
                 />
               </div>
             </div>
+            {openComment && (
+              <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-black/90 text-white p-4 rounded-t-2xl overflow-y-auto">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="font-bold text-lg">Comments</h3>
+                  <button>
+                    <FaArrowDown
+                      size={20}
+                      onClick={() => {
+                        setOpenComment(!openComment);
+                      }}
+                    />
+                  </button>
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Add a Comments..."
+                    className="flex-1 bg-gray-900 text-white p-2 rounded"
+                  />
+                  <button className="bg-black px-4 py-2 border-1 border-gray-700 rounded-xl">
+                    Post
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       ))}

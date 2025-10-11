@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const StepOne = ({ identifier, setIdentifier, onNext, step, setStep }) => {
   const navigate = useNavigate();
   return (
-    <fieldset className="bg-[#202124] rounded-box w-xs border p-4 shadow-lg">
+    <fieldset className="bg-[#202124] rounded-box w-xs h-lg border p-4 shadow-lg">
       <div className="flex items-center mb-6">
         <button
           className="text-gray-300 mr-3 hover:text-white"
