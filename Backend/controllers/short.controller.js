@@ -45,7 +45,7 @@ const uploadShort = asyncHandler(async (req, res) => {
 });
 
 const getAllShorts = asyncHandler(async (req, res) => {
-  const shorts = await Short.find().sort({ createdAt: -1 }).populate("channel");
+  const shorts = await Short.find().sort({ createdAt: -1 }).populate("channel comments.author comments.replies.author");
 
   if (!shorts) {
     throw new ApiError(400, "Shorts are not found !!");
@@ -83,7 +83,9 @@ const toggleLike = asyncHandler(async (req, res) => {
     }
   }
 
+  await short.populate("comments.author", "username avatar email");
   await short.populate("channel");
+  await short.populate("comments.replies.author", "username avatar");
 
   await short.save();
 
@@ -124,7 +126,9 @@ const toggleDisLike = asyncHandler(async (req, res) => {
     }
   }
 
+  await short.populate("comments.author", "username avatar email");
   await short.populate("channel");
+  await short.populate("comments.replies.author", "username avatar");
   await short.save();
 
   return res
@@ -162,7 +166,9 @@ const toggleSave = asyncHandler(async (req, res) => {
     isSaved = true;
   }
 
+  await short.populate("comments.author", "username avatar email");
   await short.populate("channel");
+  await short.populate("comments.replies.author", "username avatar");
   await short.save();
 
   return res
@@ -195,7 +201,9 @@ const getViews = asyncHandler(async (req, res) => {
     throw new ApiError(404, "short not found !!");
   }
 
+   await short.populate("comments.author", "username avatar email");
   await short.populate("channel");
+  await short.populate("comments.replies.author", "username avatar");
 
   return res.status(200).json(new ApiResponse(200, { short }, "View added !!"));
 });
@@ -236,7 +244,7 @@ const addReply = asyncHandler(async (req, res) => {
     throw new ApiError(400, "short not found !");
   }
 
-  const comment = await Short.comments.id(commentId);
+  const comment = await short.comments.id(commentId);
   console.log("comment =", comment);
   if (!comment) {
     throw new ApiError(404, "Comment not found !");

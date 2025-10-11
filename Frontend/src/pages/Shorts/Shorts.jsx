@@ -32,7 +32,13 @@ const Shorts = () => {
   const [playIndex, setPlayIndex] = useState(null);
   const [openComment, setOpenComment] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
+  const [loading2, setLoading2] = useState(false);
   const [viewedShort, setViewedShort] = useState([]);
+  const [comment, setComment] = useState([]);
+  const [newComment, setNewComment] = useState("");
+  const [reply, setReply] = useState(false);
+  const [replyText, setReplyText] = useState({});
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -177,6 +183,65 @@ const Shorts = () => {
     }
   };
 
+  const handleAddComment = async (shortId) => {
+    setLoading1(true);
+    if (!newComment) {
+      return;
+    }
+    try {
+      const result = await axios.post(
+        `${serverUrl}/api/v1/short/${shortId}/add-comment`,
+        { message: newComment },
+        { withCredentials: true }
+      );
+      console.log(result.data?.data?.short?.comments);
+      setComment((prev) => ({
+        ...prev,
+        [shortId]: result.data?.data?.short?.comments || [],
+      }));
+      setNewComment("");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setTimeout(() => {
+        setLoading1(false);
+      }, 800);
+    }
+  };
+
+  const handleAddReply = async ({ commentId, replyText, shortId }) => {
+    setLoading2(true);
+    if (!replyText) {
+      setLoading2(false);
+      return;
+    }
+
+    try {
+      const result = await axios.post(
+        `${serverUrl}/api/v1/short/${shortId}/${commentId}/add-reply`,
+        { message: replyText },
+        { withCredentials: true }
+      );
+      console.log(result.data?.data?.short?.comments);
+
+      setComment((prev) => ({
+        ...prev,
+        [shortId]: result.data?.data?.short?.comments || [],
+      }));
+
+      setReplyText((prev) => ({
+        ...prev,
+        [commentId]: "",
+      }));
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setTimeout(() => {
+        setLoading2(false);
+      }, 1000);
+    }
+  };
+
   useEffect(() => {
     if (!shortData || shortData.length === 0) {
       return;
@@ -295,6 +360,10 @@ const Shorts = () => {
                   label={"Comment"}
                   onClick={() => {
                     setOpenComment(!openComment);
+                    setComment((prev) => ({
+                      ...prev,
+                      [short._id]: short.comments,
+                    }));
                   }}
                 />
                 <IconButton
@@ -319,7 +388,7 @@ const Shorts = () => {
               </div>
             </div>
             {openComment && (
-              <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-black/90 text-white p-4 rounded-t-2xl overflow-y-auto">
+              <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-black/95 text-white p-4 rounded-t-2xl overflow-y-auto">
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="font-bold text-lg">Comments</h3>
                   <button>
@@ -336,10 +405,108 @@ const Shorts = () => {
                     type="text"
                     placeholder="Add a Comments..."
                     className="flex-1 bg-gray-900 text-white p-2 rounded"
+                    onChange={(e) => {
+                      setNewComment(e.target.value);
+                    }}
                   />
-                  <button className="bg-black px-4 py-2 border-1 border-gray-700 rounded-xl">
-                    Post
+                  <button
+                    onClick={() => {
+                      handleAddComment(short?._id);
+                    }}
+                    className="bg-black px-4 py-2 border-1 border-gray-700 rounded-xl"
+                  >
+                    {loading1 ? (
+                      <span className="loading loading-spinner loading-xs"></span>
+                    ) : (
+                      "Post"
+                    )}
                   </button>
+                </div>
+                <div className="space-y-3 mt-4">
+                  {comment[short?._id]?.length > 0 ? (
+                    comment[short?._id].map((com) => (
+                      <div
+                        key={com._id}
+                        className="bg-gray-800/40 p-2 rounded-lg"
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <img
+                            src={com?.author?.avatar}
+                            alt="avatar"
+                            className="w-6 h-6 rounded-full"
+                          />
+                          <h3 className="text-sm font-semibold">
+                            {com?.author?.username}
+                          </h3>
+                        </div>
+                        <p className="text-sm ml-8">{com?.message}</p>
+                        <button
+                          className="text-md text-orange-500 mt-2  ml-8 hover:underline hover:text-orange-600 cursor-pointer"
+                          onClick={() => {
+                            setReply(!reply);
+                          }}
+                        >
+                          reply
+                        </button>
+
+                        {reply && (
+                          <div className="mt-2 ml-8 flex gap-2">
+                            <input
+                              onChange={(e) => {
+                                setReplyText((prev) => ({
+                                  ...prev,
+                                  [com._id]: e.target.value,
+                                }));
+                              }}
+                              value={replyText[com._id] || []}
+                              type="text"
+                              className="w-full bg-gray-900 text-white text-sm p-2 rounded"
+                              placeholder="Add a reply.."
+                            />
+                            <button
+                              className="bg-orange-500 px-3 py-1 rounded-xl cursor-pointer  "
+                              onClick={() => {
+                                handleAddReply({
+                                  shortId: short._id,
+                                  commentId: com._id,
+                                  replyText: replyText[com._id],
+                                });
+                                setReplyText((prev) => ({
+                                  ...prev,
+                                  [com._id]: "",
+                                }));
+                              }}
+                            >
+                              Reply
+                            </button>
+                          </div>
+                        )}
+
+                        <div className="ml-5 mt-2 space-y-2">
+                          {com?.replies.map((reply) => (
+                            <div
+                              key={reply._id}
+                              className="bg-gray-800/40 p-2 rounded-lg"
+                            >
+                              <div className="flex items-center gap-2 mb-1">
+                                <img
+                                  src={reply?.author?.avatar}
+                                  alt="avatar"
+                                  className="w-6 h-6 rounded-full"
+                                />
+                                <h3 className="text-sm font-semibold">
+                                  {reply?.author?.username}
+                                </h3>
+                              </div>
+                              <p className="text-sm ml-8">{reply?.message}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-gray-400">No comments yet</p>
+                  )}
                 </div>
               </div>
             )}
