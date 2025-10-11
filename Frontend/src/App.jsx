@@ -28,6 +28,7 @@ import CreatePlaylist from "./pages/Playlist/CreatePlaylist";
 import CreatePost from "./pages/Post/CreatePost";
 import GetContentData from "./customHooks/GetContentData";
 import PlayVideo from "./pages/Videos/PlayVideo";
+import PlayShort from "./pages/Shorts/PlayShort";
 
 export const serverUrl = "http://localhost:8080";
 
@@ -72,6 +73,14 @@ function App() {
             element={
               <ProtectRoute userData={userData}>
                 <Shorts />
+              </ProtectRoute>
+            }
+          />
+          <Route
+            path="play-short/:shortId"
+            element={
+              <ProtectRoute userData={userData}>
+                <PlayShort />
               </ProtectRoute>
             }
           />

@@ -22,10 +22,13 @@ import Description from "../../components/Description";
 import IconButton from "../../components/IconButton";
 import { serverUrl } from "../../App.jsx";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
-const Shorts = () => {
+const PlayShort = () => {
+  const { shortId } = useParams();
   const { shortData } = useSelector((state) => state.content);
   const { userData } = useSelector((state) => state.user);
+  const selectedShort = shortData?.find((s) => s._id === shortId);
 
   const [shortList, setShortList] = useState([]);
   const shortRef = useRef([]);
@@ -39,6 +42,29 @@ const Shorts = () => {
   const [newComment, setNewComment] = useState("");
   const [reply, setReply] = useState(false);
   const [replyText, setReplyText] = useState({});
+
+  useEffect(() => {
+    if (!shortData || shortData.length === 0) {
+      return;
+    }
+
+    if (selectedShort) {
+      const selected = shortData.find(
+        (short) => short._id === selectedShort._id
+      );
+
+      const remaining = shortData.filter(
+        (short) => short._id !== selectedShort._id
+      );
+      if (selected) {
+        setShortList([selected, ...remaining]);
+      } else {
+        setShortList(shortData);
+      }
+    } else {
+      setShortList(shortData);
+    }
+  }, [selectedShort, shortData]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -242,25 +268,15 @@ const Shorts = () => {
     }
   };
 
-  useEffect(() => {
-    if (!shortData || shortData.length === 0) {
-      return;
-    }
-
-    const shuffled = [...shortData].sort(() => Math.random() - 0.5);
-    setShortList(shuffled);
-    //console.log(shuffled);
-  }, [shortData]);
-
   return (
     <div className="h-[100vh] w-full overflow-y-scroll snap-y snap-mandatory">
       {shortList?.map((short, index) => (
         <div
           key={short?.id}
-          className="min-h-screen w-full flex md:items-center  items-start justify-center snap-start pt-[40px] md:pt-0"
+          className="min-h-screen w-full flex md:items-center items-start justify-center snap-start pt-[40px] md:pt-0"
         >
           <div
-            className="relative w-[420px] md:w-[350px] aspect-[9/16] bg-black rounded-2xl mt-[120px] md:mt-[0px] overflow-hidden shadow-xl  border border-gray-700 cursor-pointer"
+            className="relative w-[420px] md:w-[350px] aspect-[9/16] bg-black rounded-2xl overflow-hidden shadow-xl  mt-[120px] md:mt-[0px]  border border-gray-700 cursor-pointer"
             onClick={() => {
               togglePlay(index);
             }}
@@ -388,7 +404,7 @@ const Shorts = () => {
               </div>
             </div>
             {openComment && (
-              <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-black/9 text-white p-4 rounded-t-2xl overflow-y-auto">
+              <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-black/95 text-white p-4 rounded-t-2xl overflow-y-auto">
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="font-bold text-lg">Comments</h3>
                   <button>
@@ -517,4 +533,4 @@ const Shorts = () => {
   );
 };
 
-export default Shorts;
+export default PlayShort;

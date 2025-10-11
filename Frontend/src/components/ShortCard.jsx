@@ -1,8 +1,15 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const ShortCard = ({ shortUrl, title, channelName, avatar, views, id }) => {
+  const navigate = useNavigate();
   return (
-    <div className="w-45 sm:48 cursor-pointer relative">
+    <div
+      className="w-45 sm:48 cursor-pointer relative"
+      onClick={() => {
+        navigate(`play-short/${id}`);
+      }}
+    >
       <div className="rounded-xl overflow-hidden bg-black w-full h-70 border-1 border-gray-700">
         <video
           src={shortUrl}

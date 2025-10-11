@@ -14,7 +14,7 @@ const VideoCard = ({
   const navigate = useNavigate();
   return (
     <div
-      className="w-[360] cursor-pointer"
+      className="w-[360px] cursor-pointer"
       onClick={() => {
         navigate(`/play-video/${id}`);
       }}

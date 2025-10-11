@@ -408,7 +408,10 @@ const Home = () => {
           icon={<SiYoutubeshorts />}
           text={"Shorts"}
           active={active === "Shorts"}
-          onClick={() => setActive("Shorts")}
+          onClick={() => {
+            setActive("Shorts");
+            navigate("/shorts");
+          }}
         />
         <MobileSizeNav
           icon={<IoIosAddCircle size={40} />}
@@ -462,7 +465,7 @@ const Home = () => {
                 </button>
               ))}
             </div>
-            <div className="mt-3">
+            <div className="mt-3 lg:ml-10">
               <AllVideosPage />
               <AllShortsPage />
             </div>
