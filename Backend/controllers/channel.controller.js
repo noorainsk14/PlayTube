@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/User.model.js";
 import { Channel } from "../models/Channel.model.js";
 import { uploadOnCloudinary } from "../config/cloudinary.js";
+import { Playlist } from "../models/Playlist.model.js";
 
 const createChannel = asyncHandler(async (req, res) => {
   const { name, description, category } = req.body;
@@ -60,7 +61,10 @@ const getChannelData = asyncHandler(async (req, res) => {
   console.log("channel user", userId);
   console.log("User from JWT middleware:", req.user);
 
-  const channel = await Channel.findOne({ owner: userId }).populate("owner").populate("videos").populate("shorts");
+  const channel = await Channel.findOne({ owner: userId })
+    .populate("owner")
+    .populate("videos")
+    .populate("shorts");
 
   if (!channel) {
     throw new ApiError(404, "Channel is not found");
@@ -119,46 +123,75 @@ const updateChannel = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200, { updatedChannel }, "Channel updated successfully !!")
+      new ApiResponse(
+        200,
+        { updatedChannel },
+        "Channel updated successfully !!"
+      )
     );
 });
 
-const toggleSubscribe = asyncHandler(async(req, res) => {
-  const {channelId} = req.body;
+const toggleSubscribe = asyncHandler(async (req, res) => {
+  const { channelId } = req.body;
   const userId = req.user._id;
 
-  if(!channelId) {
-    throw new ApiError(404,"Channel id is required !!")
+  if (!channelId) {
+    throw new ApiError(404, "Channel id is required !!");
   }
 
-  const channel = await Channel.findById(channelId)
+  const channel = await Channel.findById(channelId);
 
-  if(!channel){
-    throw new ApiError(404, "channel not found !!")
+  if (!channel) {
+    throw new ApiError(404, "channel not found !!");
   }
 
-  const isSubscribed = channel?.subscribers?.includes(userId)
+  const isSubscribed = channel?.subscribers?.includes(userId);
 
-  if(isSubscribed){
-    channel?.subscribers.pull(userId)
-  }else{
-    channel?.subscribers.push(userId)
+  if (isSubscribed) {
+    channel?.subscribers.pull(userId);
+  } else {
+    channel?.subscribers.push(userId);
   }
 
   await channel.save();
 
-  const updatedChannel = await Channel.findById(channelId).populate("owner").populate("videos").populate("shorts")
+  const updatedChannel = await Channel.findById(channelId)
+    .populate("owner")
+    .populate("videos")
+    .populate("shorts");
 
- return res.status(200).json(
-    new ApiResponse(
-      200,
-      { updatedChannel },
-      isSubscribed
-        ? "Unsubscribed from the channel successfully!"
-        : "Subscribed to the channel successfully!"
-    )
-  );
-})
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { updatedChannel },
+        isSubscribed
+          ? "Unsubscribed from the channel successfully!"
+          : "Subscribed to the channel successfully!"
+      )
+    );
+});
+
+const getAllChannelData = asyncHandler(async (req, res) => {
+  const channel = await Channel.find()
+    .populate("owner")
+    .populate("videos")
+    .populate("shorts");
+
+  if (!channel) {
+    throw new ApiError(404, "channels are not find");
+  }
+
+  return res.status(200).json(new ApiError(200, { channel }));
+});
 
 
-export { createChannel, getChannelData, updateChannel, toggleSubscribe };
+
+export {
+  createChannel,
+  getChannelData,
+  updateChannel,
+  toggleSubscribe,
+  getAllChannelData,
+};

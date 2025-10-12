@@ -388,7 +388,7 @@ const Shorts = () => {
               </div>
             </div>
             {openComment && (
-              <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-black/9 text-white p-4 rounded-t-2xl overflow-y-auto">
+              <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-black/90 text-white p-4 rounded-t-2xl overflow-y-auto">
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="font-bold text-lg">Comments</h3>
                   <button>
