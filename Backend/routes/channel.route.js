@@ -47,6 +47,6 @@ router.route("/update-channel").patch(
 );
 
 router.route("/toggle-subscribe").post(verifyJwt, toggleSubscribe)
-router.route("/get-allChannel").get(getAllChannelData)
+router.route("/get-allChannel").get(verifyJwt, getAllChannelData)
 
 export default router;

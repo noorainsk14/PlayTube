@@ -23,7 +23,7 @@ import channelRouter from "./routes/channel.route.js";
 import videoRouter from "./routes/video.route.js"
 import shortRouter  from "./routes/short.route.js"
 import playlistRouter from "./routes/playlist.route.js"
-import postRouter from "./routes/playlist.route.js"
+import postRouter from "./routes/post.route.js"
 
 //route declaration
 app.use("/api/v1/users", userRouter);

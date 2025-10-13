@@ -5,7 +5,7 @@ import { createPlaylist, toggleSavePlaylist } from "../controllers/playlist.cont
 
 const router = Router();
 
-router.route("/create-Playlist").post(verifyJwt, createPlaylist)
+router.route("/create-playlist").post(verifyJwt, createPlaylist)
 router.route("/toggle-save").post(verifyJwt, toggleSavePlaylist)
 
 export default router

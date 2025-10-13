@@ -12,7 +12,7 @@ const createPost = asyncHandler(async(req, res) => {
     const {ChannelId, content} = req.body
     const file = req.file
 
-    if(!ChannelId || content){
+    if(!ChannelId || !content){
         throw new ApiError(400, "ChannelId and content are required")
     }
 
@@ -32,7 +32,7 @@ const createPost = asyncHandler(async(req, res) => {
     })
 
     await Channel.findByIdAndUpdate(ChannelId, {
-        $pull:{communityPost: post._id}
+        $push:{communityPost: post._id}
     })
 
 

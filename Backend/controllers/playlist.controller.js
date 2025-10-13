@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { Channel } from "../models/Channel.model.js";
 import { Video } from "../models/Video.model.js";
 import { Playlist } from "../models/Playlist.model.js";
+import mongoose from "mongoose";
 
 const createPlaylist = asyncHandler(async(req, res) => {
     const {title, description, channelId, videoIds} = req.body
@@ -53,7 +54,7 @@ const toggleSavePlaylist = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid playlistId");
   }
 
-  const playlist = await Playlist.findById(videoId).populate("channel");
+  const playlist = await Playlist.findById(playlistId).populate("channel");
 
   if (!playlist) {
     throw new ApiError(404, "playlist not found !!");

@@ -174,16 +174,31 @@ const toggleSubscribe = asyncHandler(async (req, res) => {
 });
 
 const getAllChannelData = asyncHandler(async (req, res) => {
-  const channel = await Channel.find()
-    .populate("owner")
+  const channels = await Channel.find()
     .populate("videos")
-    .populate("shorts");
+    .populate("shorts")
+    .populate("subscribers")
+    .populate({path: "communityPost", populate: {
+      path: "channel",
+      model: "Channel"
+    }})
+    .populate({
+      path: "playlist",
+      populate:{
+        path: "videos",
+        model: "Video",
+        populate: {
+          path: "channel",
+          model: "Channel"
+        }
+      }
+    }).lean();
 
-  if (!channel) {
+  if (!channels || channels.length === 0) {
     throw new ApiError(404, "channels are not find");
   }
 
-  return res.status(200).json(new ApiError(200, { channel }));
+  return res.status(200).json(new ApiResponse(200, { channels }));
 });
 
 
