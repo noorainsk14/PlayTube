@@ -2,7 +2,11 @@ import { useEffect } from "react";
 import axios from "axios";
 import { serverUrl } from "../App";
 import { useDispatch } from "react-redux";
-import { setChannelData, setUserData } from "../redux/userSlice";
+import {
+  setAllChannelData,
+  setChannelData,
+  setUserData,
+} from "../redux/userSlice";
 
 const GetChannelData = () => {
   const dispatch = useDispatch();
@@ -21,6 +25,23 @@ const GetChannelData = () => {
       }
     };
     fetchChannel();
+  }, [dispatch]);
+
+  useEffect(() => {
+    const fetchAllChannel = async () => {
+      try {
+        const result = await axios.get(
+          `${serverUrl}/api/v1/channel/get-allChannel`,
+          { withCredentials: true }
+        );
+        dispatch(setAllChannelData(result?.data?.data?.channels));
+        console.log(result?.data?.data?.channels);
+      } catch (error) {
+        console.log(error?.response?.data?.message);
+        dispatch(setAllChannelData(null));
+      }
+    };
+    fetchAllChannel();
   }, [dispatch]);
 };
 
