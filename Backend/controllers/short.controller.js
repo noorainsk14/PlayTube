@@ -286,6 +286,20 @@ const getVideoById = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { short }, "short fetched successfully"));
 });
 
+const getLikedShorts = asyncHandler(async(req, res) => {
+  const userId = req.user?._id
+
+  const likeShorts = await Short.find({likes : userId}).populate("channel", "name avatar").populate("likes", "username")
+
+  if(!likeShorts){
+    throw new ApiError(404, "No videos liked.")
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, {likeShorts}, "Like Videos")
+  )
+})
+
 export {
   uploadShort,
   getAllShorts,
@@ -296,4 +310,5 @@ export {
   addComment,
   addReply,
   getVideoById,
+  getLikedShorts
 };
