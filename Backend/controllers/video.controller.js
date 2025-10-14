@@ -310,6 +310,25 @@ const getLikedVideos = asyncHandler(async(req, res) => {
   )
 })
 
+const getSavedVideos = asyncHandler(async(req, res) => {
+  const userId = req.user?._id
+
+   if (!userId) {
+    throw new ApiError(401, "Unauthorized access");
+  }
+
+
+  const savedVideos = await Video.find({savedBy : userId}).populate("channel", "name avatar").populate("likes", "username")
+
+  if(!savedVideos){
+    throw new ApiError(404, "No videos liked.")
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, {savedVideos}, "Saved Videos")
+  )
+})
+
 
 export {
   createVideo,
@@ -321,5 +340,6 @@ export {
   addComment,
   addReply,
   getVideoById,
-  getLikedVideos
+  getLikedVideos,
+  getSavedVideos
 };
