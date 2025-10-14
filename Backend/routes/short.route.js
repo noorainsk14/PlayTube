@@ -6,6 +6,7 @@ import {
   addReply,
   getAllShorts,
   getLikedShorts,
+  getSavedShorts,
   getVideoById,
   getViews,
   toggleDisLike,
@@ -16,13 +17,13 @@ import {
 
 const router = Router();
 
+//static routes
 router
   .route("/upload-short")
   .post(verifyJwt, upload.single("short"), uploadShort);
-
-  //static routes
 router.route("/get-shorts").get(verifyJwt, getAllShorts);
 router.route("/liked-shorts").get(verifyJwt, getLikedShorts);
+router.route("/saved-shorts").get(verifyJwt, getSavedShorts);
 
 //dynamic routes
 router.route("/:shortId/toggle-like").put(verifyJwt, toggleLike);
@@ -33,5 +34,4 @@ router.route("/:shortId/add-comment").post(verifyJwt, addComment);
 router.route("/:shortId/:commentId/add-reply").post(verifyJwt, addReply);
 router.route("/:shortId/:commentId/add-reply").post(verifyJwt, addReply);
 router.route("/:shortId").get(getVideoById);
-router.route("/liked-shorts").get(verifyJwt, getLikedShorts);
 export default router;

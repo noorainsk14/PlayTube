@@ -288,6 +288,10 @@ const getVideoById = asyncHandler(async (req, res) => {
 
 const getLikedShorts = asyncHandler(async(req, res) => {
   const userId = req.user?._id
+  
+   if (!userId) {
+    throw new ApiError(401, "Unauthorized access");
+  }
 
   const likeShorts = await Short.find({likes : userId}).populate("channel", "name avatar").populate("likes", "username")
 
@@ -297,6 +301,25 @@ const getLikedShorts = asyncHandler(async(req, res) => {
 
   return res.status(200).json(
     new ApiResponse(200, {likeShorts}, "Like Videos")
+  )
+})
+
+const getSavedShorts = asyncHandler(async(req, res) => {
+  const userId = req.user?._id
+
+   if (!userId) {
+    throw new ApiError(401, "Unauthorized access");
+  }
+
+
+  const savedShorts = await Short.find({savedBy : userId}).populate("channel", "name avatar").populate("likes", "username")
+
+  if(!savedShorts){
+    throw new ApiError(404, "No videos liked.")
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, {savedShorts}, "Saved Videos")
   )
 })
 
@@ -310,5 +333,6 @@ export {
   addComment,
   addReply,
   getVideoById,
-  getLikedShorts
+  getLikedShorts,
+  getSavedShorts
 };
