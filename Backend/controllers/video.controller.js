@@ -291,6 +291,25 @@ const getVideoById = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { video }, "Video fetched successfully"));
 });
 
+const getLikedVideos = asyncHandler(async(req, res) => {
+  const userId = req.user?._id
+
+   if (!userId) {
+    throw new ApiError(401, "Unauthorized access");
+  }
+
+
+  const likeVideos = await Video.find({likes : userId}).populate("channel", "name avatar").populate("likes", "username")
+
+  if(!likeVideos){
+    throw new ApiError(404, "No videos liked.")
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, {likeVideos}, "Like Videos")
+  )
+})
+
 
 export {
   createVideo,
@@ -301,5 +320,6 @@ export {
   getViews,
   addComment,
   addReply,
-  getVideoById
+  getVideoById,
+  getLikedVideos
 };
