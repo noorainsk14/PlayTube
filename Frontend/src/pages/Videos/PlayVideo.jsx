@@ -369,21 +369,21 @@ const PlayVideo = () => {
             onTimeUpdate={handleUpdateTime}
           />
           {showControls && (
-            <div className="absolute inset-0 hidden lg:flex items-center justify-center gap-6 sm:gap-10 transition-opacity duration-300 z-20">
+            <div className="absolute  inset-0 hidden lg:flex items-center justify-center gap-6 sm:gap-10 transition-opacity duration-300 z-20">
               <button
-                className="bg-black/70 p-3 sm:p-4 rounded-full hover:bg-orange-600 transition"
+                className="bg-black/70 p-3 cursor-pointer  sm:p-4 rounded-full hover:bg-orange-600 transition"
                 onClick={skipBackward}
               >
                 <FaBackward size={24} />
               </button>
               <button
-                className="bg-black/70 p-3 sm:p-4 rounded-full hover:bg-orange-600 transition"
+                className="bg-black/70 p-3 cursor-pointer sm:p-4 rounded-full hover:bg-orange-600 transition"
                 onClick={togglePlay}
               >
                 {isPlaying ? <FaPause size={28} /> : <FaPlay size={28} />}
               </button>
               <button
-                className="bg-black/70 p-3 sm:p-4 rounded-full hover:bg-orange-600 transition"
+                className="bg-black/70 p-3 sm:p-4 cursor-pointer rounded-full hover:bg-orange-600 transition"
                 onClick={skipForward}
               >
                 <FaForward size={24} />
@@ -391,12 +391,12 @@ const PlayVideo = () => {
             </div>
           )}
 
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent px-2 sm:px-4 py-2 z-30">
+          <div className="absolute bottom-0 left-0 right-0  bg-gradient-to-t from-black/80 via-black/60 to-transparent px-2 sm:px-4 py-2 z-30">
             <input
               type="range"
               min={0}
               max={100}
-              className="w-full accent-orange-600"
+              className="w-full cursor-pointer accent-orange-600"
               onChange={handleSeek}
               value={progress}
             />
@@ -407,26 +407,26 @@ const PlayVideo = () => {
                   {formatTime(currentTime)}/ {formatTime(duration)}
                 </span>
                 <button
-                  className="bg-black/70 px-2 py-1 rounded hover:bg-orange-600 transition"
+                  className="bg-black/70 px-2 py-1  cursor-pointer rounded hover:bg-orange-600 transition"
                   onClick={skipBackward}
                 >
-                  <FaBackward size={14} />
+                  <FaBackward size={15} />
                 </button>
                 <button
-                  className="bg-black/70 px-2 py-1 rounded hover:bg-orange-600 transition"
+                  className="bg-black/70 px-2 py-1 cursor-pointer rounded hover:bg-orange-600 transition"
                   onClick={togglePlay}
                 >
-                  {isPlaying ? <FaPause size={14} /> : <FaPlay size={14} />}
+                  {isPlaying ? <FaPause size={14} /> : <FaPlay size={15} />}
                 </button>
                 <button
-                  className="bg-black/70 px-2 py-1 rounded hover:bg-orange-600 transition"
+                  className="bg-black/70 px-2 py-1 cursor-pointer rounded hover:bg-orange-600 transition"
                   onClick={skipForward}
                 >
-                  <FaForward size={14} />
+                  <FaForward size={15} />
                 </button>
               </div>
-              <div className="flex items-center gap-2 sm:gap-2">
-                <button onClick={handleMute}>
+              <div className="flex text-xl items-center gap-2  sm:gap-2">
+                <button className="cursor-pointer p-2" onClick={handleMute}>
                   {isMuted ? <FaVolumeMute /> : <FaVolumeUp />}
                 </button>
                 <input
@@ -435,12 +435,12 @@ const PlayVideo = () => {
                   id="volume"
                   value={isMuted ? 0 : vol}
                   onChange={handleVolume}
-                  className="accent-orange-600 w-16 sm:w-24"
+                  className="accent-orange-600 cursor-pointer w-16 sm:w-24"
                   min={0}
                   max={1}
                   step={0.1}
                 />
-                <button onClick={handleFullScreen}>
+                <button onClick={handleFullScreen} className="cursor-pointer">
                   <FaExpand />
                 </button>
               </div>
@@ -453,20 +453,30 @@ const PlayVideo = () => {
         </h1>
         <p className="text-sm text-gray-400">{video?.views} views</p>
         <div className="flex mt-2 flex-wrap items-center justify-between">
-          <div className="flex  items-center justify-start gap-4">
+          <div className="flex  items-center justify-start gap-4 cursor-pointer">
             <img
+              onClick={() => {
+                navigate(`/channel-page/${channel?._id}`);
+              }}
               src={channel?.avatar}
               alt={channel?.avatar}
               className="w-12 h-12 rounded-full border-2 border-gray-600"
             />
             <div>
-              <h1 className="text-md font-bold">{channel?.name}</h1>
+              <h1
+                className="text-md font-bold cursor-pointer"
+                onClick={() => {
+                  navigate(`/channel-page/${channel?._id}`);
+                }}
+              >
+                {channel?.name}
+              </h1>
               <h3 className="text-[13px]">{channel?.subscribers?.length}</h3>
             </div>
             <button
               style={{ minWidth: "120px" }}
               onClick={handleSubscribe}
-              className={`px-[20px] py-[8px] rounded-4xl border border-gray-600 ml-[20px] text-md ${
+              className={`px-[20px] py-[8px] rounded-4xl border cursor-pointer border-gray-600 ml-[20px] text-md ${
                 isSubscribe
                   ? "bg-black text-white  hover:bg-orange-600 hover:text-black "
                   : "bg-white text-black  hover:bg-orange-600 hover:text-black"
@@ -533,7 +543,7 @@ const PlayVideo = () => {
             <button
               disabled={loading1}
               onClick={handleAddComment}
-              className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg"
+              className="bg-orange-600 cursor-pointer hover:bg-orange-700 text-white px-4 py-2 rounded-lg"
             >
               {loading1 ? (
                 <span className="loading loading-spinner loading-md"></span>
@@ -667,7 +677,7 @@ const ReplyComment = ({ comment, handleReply, loading2 }) => {
             className="flex-1  mb-4 border border-gray-700 bg-[#1a1a1a] text-white rounded-lg px-2 py-2 focus:outline-none focus:ring-1 focus:ring-orange-600 "
           />
           <button
-            className="bg-orange-600 mb-4 hover:bg-orange-700 text-white px-4 py-2 rounded-lg whitespace-nowrap "
+            className="bg-orange-600 mb-4 cursor-pointer hover:bg-orange-700 text-white px-4 py-2 rounded-lg whitespace-nowrap "
             onClick={() => {
               handleReply({ commentId: comment._id, replyText: replyText });
               setTimeout(() => {

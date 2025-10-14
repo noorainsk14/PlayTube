@@ -160,7 +160,13 @@ const MobileProfile = () => {
         <MobileProfileMenu icon={<FaHistory />} text={"History"} />
         <MobileProfileMenu icon={<FaList />} text={"Playlist"} />
         <MobileProfileMenu icon={<GoVideo />} text={"Save Videos"} />
-        <MobileProfileMenu icon={<FaThumbsUp />} text={"Like Videos"} />
+        <MobileProfileMenu
+          icon={<FaThumbsUp />}
+          text={"Like Videos"}
+          onClick={() => {
+            navigate("/liked-content");
+          }}
+        />
         <MobileProfileMenu icon={<SiYoutubestudio />} text={"PT Studio"} />
       </div>
     </div>

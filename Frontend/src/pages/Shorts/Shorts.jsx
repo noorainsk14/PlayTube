@@ -22,6 +22,7 @@ import Description from "../../components/Description";
 import IconButton from "../../components/IconButton";
 import { serverUrl } from "../../App.jsx";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Shorts = () => {
   const { shortData } = useSelector((state) => state.content);
@@ -39,6 +40,7 @@ const Shorts = () => {
   const [newComment, setNewComment] = useState("");
   const [reply, setReply] = useState(false);
   const [replyText, setReplyText] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -288,11 +290,19 @@ const Shorts = () => {
             <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent text-white space-y-1">
               <div className="flex items-center justify-start gap-2">
                 <img
+                  onClick={() => {
+                    navigate(`/channel-page/${short?.channel?._id}`);
+                  }}
                   src={short?.channel?.avatar}
                   alt="avatar"
                   className="w-8 h-8 rounded-full border-1 border-gray-700 "
                 />
-                <span className="text-sm text-gray-300">
+                <span
+                  onClick={() => {
+                    navigate(`/channel-page/${short?.channel?._id}`);
+                  }}
+                  className="text-sm text-gray-300"
+                >
                   @{short?.channel?.name?.toLowerCase()}
                 </span>
                 <button
@@ -477,7 +487,11 @@ const Shorts = () => {
                                 }));
                               }}
                             >
-                              Reply
+                              {loading2 ? (
+                                <span className="loading loading-spinner loading-xs"></span>
+                              ) : (
+                                "Reply"
+                              )}
                             </button>
                           </div>
                         )}

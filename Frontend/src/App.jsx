@@ -9,7 +9,6 @@ import Shorts from "./pages/Shorts/Shorts";
 import Subscriptions from "./pages/Subscriptions/Subscriptions";
 import Playlist from "./pages/Playlist/Playlist";
 import SaveVideos from "./pages/SaveVideos/SaveVideos";
-import LikeVideos from "./pages/LikeVideos/LikeVideos";
 import History from "./pages/History/History";
 import GetCurrentUser from "./customHooks/GetCurrentUser";
 import MobileProfile from "./components/MobileProfile";
@@ -19,7 +18,6 @@ import ViewChannel from "./pages/Channel/ViewChannel";
 import GetChannelData from "./customHooks/GetChannelData";
 import UpdateChannel from "./pages/Channel/UpdateChannel";
 import { useSelector } from "react-redux";
-import { Children } from "react";
 import { showErrorToast } from "./helper/toastHelper";
 import CreatePage from "./pages/CreatePage";
 import CreateVideo from "./pages/Videos/CreateVideo";
@@ -30,6 +28,7 @@ import GetContentData from "./customHooks/GetContentData";
 import PlayVideo from "./pages/Videos/PlayVideo";
 import PlayShort from "./pages/Shorts/PlayShort";
 import ChannelPage from "./pages/Channel/ChannelPage";
+import LikeContent from "./pages/LikeContent/LikeContent";
 
 export const serverUrl = "http://localhost:8080";
 
@@ -118,10 +117,10 @@ function App() {
             }
           />
           <Route
-            path="like-videos"
+            path="liked-content"
             element={
               <ProtectRoute userData={userData}>
-                <LikeVideos />
+                <LikeContent />
               </ProtectRoute>
             }
           />

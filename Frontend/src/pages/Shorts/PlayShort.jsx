@@ -23,6 +23,7 @@ import IconButton from "../../components/IconButton";
 import { serverUrl } from "../../App.jsx";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const PlayShort = () => {
   const { shortId } = useParams();
@@ -42,6 +43,7 @@ const PlayShort = () => {
   const [newComment, setNewComment] = useState("");
   const [reply, setReply] = useState(false);
   const [replyText, setReplyText] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!shortData || shortData.length === 0) {
@@ -304,11 +306,19 @@ const PlayShort = () => {
             <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent text-white space-y-1">
               <div className="flex items-center justify-start gap-2">
                 <img
+                  onClick={() => {
+                    navigate(`/channel-page/${short?.channel?._id}`);
+                  }}
                   src={short?.channel?.avatar}
                   alt="avatar"
                   className="w-8 h-8 rounded-full border-1 border-gray-700 "
                 />
-                <span className="text-sm text-gray-300">
+                <span
+                  className="text-sm text-gray-300"
+                  onClick={() => {
+                    navigate(`/channel-page/${short?.channel?._id}`);
+                  }}
+                >
                   @{short?.channel?.name?.toLowerCase()}
                 </span>
                 <button

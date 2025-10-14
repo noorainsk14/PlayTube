@@ -6,6 +6,7 @@ import { Video } from "../models/Video.model.js";
 import { Playlist } from "../models/Playlist.model.js";
 import { Post } from "../models/Post.model.js";
 import { uploadOnCloudinary } from "../config/cloudinary.js";
+import mongoose from "mongoose";
 
 
 const createPost = asyncHandler(async(req, res) => {

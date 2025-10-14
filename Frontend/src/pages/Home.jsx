@@ -382,7 +382,7 @@ const Home = () => {
             selected={selectedItem === "Like Videos"}
             onClick={() => {
               setSelectedItem("Like Videos");
-              navigate("like-videos");
+              navigate("liked-content");
             }}
           />
         </nav>

@@ -178,10 +178,22 @@ const getAllChannelData = asyncHandler(async (req, res) => {
     .populate("videos")
     .populate("shorts")
     .populate("subscribers")
-    .populate({path: "communityPost", populate: {
-      path: "channel",
-      model: "Channel"
-    }})
+    .populate({path: "communityPost", populate: [
+      {
+        path: "channel",
+        model: "Channel"
+      },
+      {
+        path: "comments.author",
+        model: "User",
+        select : "username avatar"
+      },
+      {
+        path: "comments.replies.author",
+        model: "User",
+        select : "username avatar"
+      },
+    ]})
     .populate({
       path: "playlist",
       populate:{
