@@ -178,39 +178,102 @@ const getAllChannelData = asyncHandler(async (req, res) => {
     .populate("videos")
     .populate("shorts")
     .populate("subscribers")
-    .populate({path: "communityPost", populate: [
-      {
-        path: "channel",
-        model: "Channel"
-      },
-      {
-        path: "comments.author",
-        model: "User",
-        select : "username avatar"
-      },
-      {
-        path: "comments.replies.author",
-        model: "User",
-        select : "username avatar"
-      },
-    ]})
+    .populate({
+      path: "communityPost",
+      populate: [
+        {
+          path: "channel",
+          model: "Channel",
+        },
+        {
+          path: "comments.author",
+          model: "User",
+          select: "username avatar",
+        },
+        {
+          path: "comments.replies.author",
+          model: "User",
+          select: "username avatar",
+        },
+      ],
+    })
     .populate({
       path: "playlist",
-      populate:{
+      populate: {
         path: "videos",
         model: "Video",
         populate: {
           path: "channel",
-          model: "Channel"
-        }
-      }
-    }).lean();
+          model: "Channel",
+        },
+      },
+    })
+    .lean();
 
   if (!channels || channels.length === 0) {
     throw new ApiError(404, "channels are not find");
   }
 
   return res.status(200).json(new ApiResponse(200, { channels }));
+});
+
+const getSubscribedData = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+
+  const SubscribedChannels = await Channel.find({ subscribers: userId })
+    .populate({
+      path: "videos",
+      populate: {
+        path: "channel",
+        select: "name avatar",
+      },
+    })
+    .populate({
+      path: "shorts",
+      populate: {
+        path: "channel",
+        select: "name avatar",
+      },
+    })
+    .populate({
+      path: "playlist",
+      populate: {
+        path: "channel",
+        select: "name avatar",
+      },
+      populate: {
+        path: "videos",
+        populate: { path: "channel" },
+      },
+    })
+    .populate({
+      path: "communityPost",
+      populate: [{path: "channel", select : "name avatar"},
+      {path: "comments.author", select :"usename avatar email"},
+      {path: "comments.replies.author", select :"usename avatar email"},
+    
+    ]
+
+    })
+
+  if (!SubscribedChannels || SubscribedChannels.length === 0) {
+    throw new ApiError(404, "Failed to find subscribed channels");
+  }
+
+  const videos = SubscribedChannels.flatMap((ch) => ch.videos);
+  const shorts = SubscribedChannels.flatMap((ch) => ch.shorts);
+  const playlist = SubscribedChannels.flatMap((ch) => ch.playlist);
+  const Post = SubscribedChannels.flatMap((ch) => ch.communityPost);
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { SubscribedChannels, videos, shorts, playlist, Post },
+        "subscribed cheenel response"
+      )
+    );
 });
 
 
@@ -221,4 +284,5 @@ export {
   updateChannel,
   toggleSubscribe,
   getAllChannelData,
+  getSubscribedData,
 };

@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
@@ -8,7 +8,6 @@ import ChangePassword from "./pages/ChangePassword";
 import Shorts from "./pages/Shorts/Shorts";
 import Subscriptions from "./pages/Subscriptions/Subscriptions";
 import Playlist from "./pages/Playlist/Playlist";
-import SaveVideos from "./pages/SaveVideos/SaveVideos";
 import History from "./pages/History/History";
 import GetCurrentUser from "./customHooks/GetCurrentUser";
 import MobileProfile from "./components/MobileProfile";
@@ -25,10 +24,12 @@ import CreateShort from "./pages/Shorts/CreateShort";
 import CreatePlaylist from "./pages/Playlist/CreatePlaylist";
 import CreatePost from "./pages/Post/CreatePost";
 import GetContentData from "./customHooks/GetContentData";
+import GetSubscribeData from "./customHooks/GetSubscribeData";
 import PlayVideo from "./pages/Videos/PlayVideo";
 import PlayShort from "./pages/Shorts/PlayShort";
 import ChannelPage from "./pages/Channel/ChannelPage";
 import LikeContent from "./pages/LikeContent/LikeContent";
+import SaveContent from "./pages/SaveVideos/SaveContent";
 
 export const serverUrl = "http://localhost:8080";
 
@@ -44,8 +45,14 @@ function App() {
   GetCurrentUser();
   GetChannelData();
   GetContentData();
+  GetSubscribeData();
 
   const { userData } = useSelector((state) => state.user);
+  function ChannelPageWrapper() {
+    const location = useLocation();
+    return <ChannelPage key={location.pathname} />;
+  }
+
   return (
     <>
       <Toaster
@@ -101,7 +108,7 @@ function App() {
             }
           />
           <Route
-            path="playlist"
+            path="saved-playlist"
             element={
               <ProtectRoute userData={userData}>
                 <Playlist />
@@ -109,10 +116,10 @@ function App() {
             }
           />
           <Route
-            path="save-videos"
+            path="saved-content"
             element={
               <ProtectRoute userData={userData}>
-                <SaveVideos />
+                <SaveContent />
               </ProtectRoute>
             }
           />
@@ -201,7 +208,7 @@ function App() {
             path="channel-page/:id"
             element={
               <ProtectRoute userData={userData}>
-                <ChannelPage />
+                <ChannelPageWrapper />
               </ProtectRoute>
             }
           />

@@ -6,6 +6,7 @@ import {
   createChannel,
   getAllChannelData,
   getChannelData,
+  getSubscribedData,
   toggleSubscribe,
   updateChannel,
 } from "../controllers/channel.controller.js";
@@ -48,5 +49,6 @@ router.route("/update-channel").patch(
 
 router.route("/toggle-subscribe").post(verifyJwt, toggleSubscribe)
 router.route("/get-allChannel").get(verifyJwt, getAllChannelData)
+router.route("/subscribed-data").get(verifyJwt, getSubscribedData)
 
 export default router;
