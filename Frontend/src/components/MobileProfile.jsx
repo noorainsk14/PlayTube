@@ -158,8 +158,20 @@ const MobileProfile = () => {
 
       <div className="flex flex-col mt-[20px] ">
         <MobileProfileMenu icon={<FaHistory />} text={"History"} />
-        <MobileProfileMenu icon={<FaList />} text={"Playlist"} />
-        <MobileProfileMenu icon={<GoVideo />} text={"Save Videos"} />
+        <MobileProfileMenu
+          icon={<FaList />}
+          text={"Playlist"}
+          onClick={() => {
+            navigate("/saved-playlist");
+          }}
+        />
+        <MobileProfileMenu
+          icon={<GoVideo />}
+          text={"Save Videos"}
+          onClick={() => {
+            navigate("/saved-content");
+          }}
+        />
         <MobileProfileMenu
           icon={<FaThumbsUp />}
           text={"Like Videos"}

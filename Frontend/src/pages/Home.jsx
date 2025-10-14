@@ -10,7 +10,7 @@ import { SiYoutubestudio } from "react-icons/si";
 import { FcGoogle } from "react-icons/fc";
 import { TiUserAddOutline } from "react-icons/ti";
 import { FiLogOut } from "react-icons/fi";
-import { IoSettingsSharp } from "react-icons/io5";
+import { IoSettingsSharp, IoTelescope } from "react-icons/io5";
 import { Outlet, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FiLogIn } from "react-icons/fi";
@@ -40,7 +40,7 @@ const Home = () => {
   const [selectedItem, setSelectedItem] = useState("Home");
   const [active, setActive] = useState("Home");
   const navigate = useNavigate();
-  const { userData } = useSelector((state) => state.user);
+  const { userData, subscribedChannels } = useSelector((state) => state.user);
   const location = useLocation();
   const dispatch = useDispatch();
 
@@ -362,7 +362,7 @@ const Home = () => {
             selected={selectedItem === "Playlist"}
             onClick={() => {
               setSelectedItem("Playlist");
-              navigate("/playlist");
+              navigate("/saved-playlist");
             }}
           />
           <SideBarItems
@@ -372,7 +372,7 @@ const Home = () => {
             selected={selectedItem === "Save Videos"}
             onClick={() => {
               setSelectedItem("Save Videos");
-              navigate("/save-videos");
+              navigate("/saved-content");
             }}
           />
           <SideBarItems
@@ -388,7 +388,40 @@ const Home = () => {
         </nav>
         <hr className="border-gray-800 my-3" />
         {sideBarOpen && (
-          <p className="text-sm text-gray-400 px-2">Subscriptions</p>
+          <>
+            <p className="text-sm text-gray-400 px-2">Subscriptions</p>
+
+            <div className="space-y-1 mt-1">
+              {subscribedChannels?.map((ch) => (
+                <button
+                  key={ch?.id}
+                  onClick={() => {
+                    setSelectedItem(ch?._id);
+                    navigate(`/channel-page/${ch?._id}`);
+                  }}
+                  className={`flex items-center ${
+                    sideBarOpen ? "gap-3 justify-start" : "justify-center"
+                  } w-full text-left cursor-pointer p-2 rounded-lg transition ${
+                    selectedItem === ch._id
+                      ? "bg-[#272727]"
+                      : "hover:bg-gray-800 "
+                  }`}
+                >
+                  <img
+                    src={ch?.avatar}
+                    alt="avatar"
+                    className="w-6 h-6 rounded-full border border-gray-700 object-cover hover:scale-110 transition-transform duration-200"
+                  />
+                  {sideBarOpen && (
+                    <span className="text-sm text-white truncate">
+                      {ch?.name}
+                    </span>
+                  )}
+                  {ch.name}
+                </button>
+              ))}
+            </div>
+          </>
         )}
       </aside>
 
@@ -425,7 +458,10 @@ const Home = () => {
           icon={<MdOutlineSubscriptions />}
           text={"Subscriptions"}
           active={active === "Subscriptions"}
-          onClick={() => setActive("Subscriptions")}
+          onClick={() => {
+            setActive("Subscriptions");
+            navigate("/subscriptions");
+          }}
         />
         <MobileSizeNav
           icon={
