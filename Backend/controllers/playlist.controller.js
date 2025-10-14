@@ -83,7 +83,30 @@ const toggleSavePlaylist = asyncHandler(async (req, res) => {
     );
 });
 
+const getSavedPlaylist = asyncHandler(async(req, res) => {
+  const userId = req.user?._id
+
+   if (!userId) {
+    throw new ApiError(401, "Unauthorized access");
+  }
+
+
+  const savedPlaylist = await Playlist.find({savedBy : userId}).populate("videos").populate({
+    path: "videos",
+    populate: {path: "channel"}
+  })
+
+  if(!savedPlaylist){
+    throw new ApiError(404, "No videos liked.")
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, {savedPlaylist}, "Saved Videos")
+  )
+})
+
 export {
     createPlaylist,
-    toggleSavePlaylist
+    toggleSavePlaylist,
+    getSavedPlaylist
 }
