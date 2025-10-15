@@ -44,6 +44,24 @@ const userSchema = new Schema(
       ref: "Channel",
     },
 
+    history:[
+      {
+        contentId: {
+          type: mongoose.Schema.Types.ObjectId,
+          refPath: "history.contentType"
+        },
+        contentType: {
+          type: String,
+          enum:["Video", "Short"],
+          required: true
+        },
+        watchedAt:{
+          type:Date,
+          default: Date.now
+        }
+      }
+    ],
+
     refreshToken: {
       type: String,
     },

@@ -407,5 +407,5 @@ export {
   googleAuth,
   sendOtp,
   verifyOtp,
-  resetPassword,
+  resetPassword
 };

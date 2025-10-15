@@ -2,6 +2,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/User.model.js";
+import { Video } from "../models/Video.model.js";
+import { Short } from "../models/Short.model.js";
 import { Channel } from "../models/Channel.model.js";
 import { uploadOnCloudinary } from "../config/cloudinary.js";
 import { Playlist } from "../models/Playlist.model.js";
@@ -276,6 +278,69 @@ const getSubscribedData = asyncHandler(async (req, res) => {
     );
 });
 
+const addHistory = asyncHandler(async(req, res) => {
+  
+    const userId = req.user?._id
+
+    const {contentId, contentType} = req.body;
+
+    if(!["Video", "Short"].includes(contentType)) {
+      throw new ApiError(400, "Invalid contentTYpe")
+    }
+
+let content;
+
+if(contentType === "Video"){
+  content = await Video.findById(contentId)
+}else{
+  content = await Short.findById(contentId)
+}
+
+if(!content){
+  throw new ApiError(404, `${contentType} not found`)
+}
+
+await User.findByIdAndUpdate(userId, {
+  $push:{
+    history: {contentId, contentType, watchedAt: new Date()}
+  }
+})
+
+return res.status(200).json(
+  new ApiResponse(200, "Added to history")
+)
+
+});
+
+const getHistory = asyncHandler(async(req, res) => {
+    const userId = req.user?._id
+
+    const user = await User.findById(userId)
+    .populate({
+      path: "history.contentId",
+      populate: {
+        path:"channel",
+        select: "name avatar"
+      }
+    })
+    .select("history")
+
+    if(!user){
+      throw new ApiError(400, "User not found")
+    }
+
+    const sortedHistory = [...user.history].sort(
+      (a,b) => new Date(b.watchedAt) - new Date(a.watchedAt)
+    )
+
+    return res.status(200).json(
+     new ApiResponse(200, {sortedHistory})
+    )
+
+})
+
+
+
 
 
 export {
@@ -285,4 +350,6 @@ export {
   toggleSubscribe,
   getAllChannelData,
   getSubscribedData,
+  addHistory,
+  getHistory
 };
