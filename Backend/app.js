@@ -24,6 +24,7 @@ import videoRouter from "./routes/video.route.js"
 import shortRouter  from "./routes/short.route.js"
 import playlistRouter from "./routes/playlist.route.js"
 import postRouter from "./routes/post.route.js"
+import AiRouter from "./routes/ai.routes.js"
 
 //route declaration
 app.use("/api/v1/users", userRouter);
@@ -32,6 +33,7 @@ app.use("/api/v1/video", videoRouter)
 app.use("/api/v1/short", shortRouter )
 app.use("/api/v1/playlist", playlistRouter)
 app.use("/api/v1/post", postRouter)
+app.use("/api/v1", AiRouter)
 
 // Response formatter middleware: wraps all successful JSON responses
 app.use(responseFormatter);
