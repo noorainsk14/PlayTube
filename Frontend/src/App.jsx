@@ -30,6 +30,7 @@ import PlayShort from "./pages/Shorts/PlayShort";
 import ChannelPage from "./pages/Channel/ChannelPage";
 import LikeContent from "./pages/LikeContent/LikeContent";
 import SaveContent from "./pages/SaveVideos/SaveContent";
+import GetHistory from "./customHooks/GetHistory";
 
 export const serverUrl = "http://localhost:8080";
 
@@ -46,6 +47,7 @@ function App() {
   GetChannelData();
   GetContentData();
   GetSubscribeData();
+  GetHistory();
 
   const { userData } = useSelector((state) => state.user);
   function ChannelPageWrapper() {
