@@ -157,7 +157,13 @@ const MobileProfile = () => {
       </div>
 
       <div className="flex flex-col mt-[20px] ">
-        <MobileProfileMenu icon={<FaHistory />} text={"History"} />
+        <MobileProfileMenu
+          icon={<FaHistory />}
+          text={"History"}
+          onClick={() => {
+            navigate("/history");
+          }}
+        />
         <MobileProfileMenu
           icon={<FaList />}
           text={"Playlist"}

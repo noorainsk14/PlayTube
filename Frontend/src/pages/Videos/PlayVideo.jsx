@@ -330,6 +330,23 @@ const PlayVideo = () => {
   };
 
   useEffect(() => {
+    const addHistory = async () => {
+      try {
+        const result = await axios.post(
+          `${serverUrl}/api/v1/channel/add-history`,
+          { contentId: videoId, contentType: "Video" },
+          { withCredentials: true }
+        );
+        console.log(result.data?.data);
+      } catch (error) {
+        console.log("error adding history:", error);
+      }
+    };
+
+    if (videoId) addHistory();
+  }, [videoId]);
+
+  useEffect(() => {
     if (channel?.subscribers && userData?._id) {
       setIsSubscribe(
         channel.subscribers.some(

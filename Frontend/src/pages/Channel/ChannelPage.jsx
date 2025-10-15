@@ -237,7 +237,6 @@ const ChannelPage = () => {
             ))}
           </div>
         )}
-        {console.log(channel)}
         {activeTab === "Community" && (
           <div className="flex gap-4 flex-wrap">
             {channel.communityPost?.map((p) => (
