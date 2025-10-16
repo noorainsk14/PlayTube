@@ -11,11 +11,6 @@ import { FaList } from "react-icons/fa";
 import PlaylistCard from "../../components/PlaylistCard";
 import PostCard from "../../components/PostCard";
 
-const selectVideoData = createSelector(
-  (state) => state.content?.videoData,
-  (videoData) => videoData ?? []
-);
-
 const getVideoDuration = (url, callback) => {
   const video = document.createElement("video");
   video.preload = "metadata";
