@@ -35,6 +35,7 @@ import { auth, provider } from "../../utils/firebase.js";
 import AllVideosPage from "../components/AllVideosPage.jsx";
 import AllShortsPage from "../components/AllShortsPage.jsx";
 import SearchResults from "../components/SearchResult.jsx";
+import FilterResults from "../components/FilterResults.jsx";
 
 const Home = () => {
   const [sideBarOpen, setSideBarOpen] = useState(true);
@@ -48,7 +49,9 @@ const Home = () => {
   const dispatch = useDispatch();
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
   const [searchData, setSearchData] = useState("");
+  const [filterData, setFilterData] = useState("");
 
   function speak(message) {
     let utterance = new SpeechSynthesisUtterance(message);
@@ -162,6 +165,54 @@ const Home = () => {
     "Comedy",
     "Vlogs",
   ];
+
+  const handleCategoryFilter = async (category) => {
+    setLoading1(true);
+    try {
+      const result = await axios.post(
+        `${serverUrl}/api/v1/filter`,
+        { input: category },
+        { withCredentials: true }
+      );
+
+      const { videos = [], shorts = [], channels = [] } = result.data?.data;
+
+      let channelVideos = [];
+      let channelShorts = [];
+      channels.forEach((ch) => {
+        if (ch.videos?.length) channelVideos.push(...ch.videos);
+        if (ch.shorts?.length) channelShorts.push(...ch.shorts);
+      });
+
+      setFilterData({
+        ...result.data?.data,
+        videos: [...videos, ...channelVideos],
+        shorts: [...shorts, ...channelShorts],
+      });
+
+      navigate("/");
+      console.log("Category filter merged:", {
+        ...result.data?.data,
+        videos: [...videos, ...channelVideos],
+        shorts: [...shorts, ...channelShorts],
+      });
+
+      if (
+        videos.length > 0 ||
+        shorts.length > 0 ||
+        channelVideos.length > 0 ||
+        channelShorts > 0
+      ) {
+        speak(`Here are some ${category} videos and shorts for you`);
+      } else {
+        speak(`No result found for ${category}`);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading1(false);
+    }
+  };
 
   const handleSignOut = async () => {
     try {
@@ -687,13 +738,26 @@ const Home = () => {
                 <button
                   key={idx}
                   className="bg-[#272727] px-4 py-1 rounded-lg text-sm hover:bg-gray-700 whitespace-nowrap hover:cursor-pointer"
+                  onClick={() => {
+                    handleCategoryFilter(cat);
+                  }}
                 >
                   {cat}
                 </button>
               ))}
             </div>
             <div className="mt-3 lg:ml-10">
+              {loading1 && (
+                <div className="w-full items-center flex justify-center m-2">
+                  {loading1 ? (
+                    <span className="loading loading-spinner loading-lg"></span>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              )}
               {searchData && <SearchResults searchResults={searchData} />}
+              {filterData && <FilterResults filterResults={filterData} />}
               <AllVideosPage />
               <AllShortsPage />
             </div>
