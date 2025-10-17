@@ -10,6 +10,7 @@ import {
   sendOtp,
   verifyOtp,
   resetPassword,
+  getRecommendedContent,
 } from "../controllers/user.controller.js";
 import upload from "../middlewares/multer.middleware.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -40,5 +41,6 @@ router.route("/current-user").get(verifyJwt, currentUser);
 router.route("/send-otp").post(sendOtp);
 router.route("/verify-otp").post(verifyOtp);
 router.route("/reset-password").post(resetPassword);
+router.route("/recommendation").get(verifyJwt, getRecommendedContent)
 
 export default router;

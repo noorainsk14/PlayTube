@@ -7,6 +7,12 @@ import { sendMail } from "../config/sendMail.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { Channel } from "../models/Channel.model.js";
+import { Video } from "../models/Video.model.js";
+import { Short } from "../models/Short.model.js";
+
+function escapeRegex(str) {
+  return str.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&");
+}
 
 const generateAccessTokenAndRefreshToken = async (userId) => {
   //console.log("generateAccessTokenAndRefreshToken called with userId:", userId);
@@ -397,6 +403,107 @@ const resetPassword = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "Password reset successfully"));
 });
 
+const getRecommendedContent = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+
+  if (!userId) {
+    throw new ApiError(404, "Unauthorized access");
+  }
+
+  const user = await User.findById(userId)
+    .populate("history.contentId")
+    .lean();
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  // Escape special characters in regex
+  const escapeRegex = (str) => {
+    return str.replace(/[-[\]/{}()*+?.\\^$|]/g, "\\$&");
+  };
+
+  // Collect keywords from history
+  const historyKeyword = user.history.map((h) => h.contentId?.title || "");
+
+  // Collect liked and saved content
+  const likedVideos = await Video.find({ likes: userId });
+  const likedShorts = await Short.find({ likes: userId });
+  const savedVideos = await Video.find({ savedBy: userId });
+  const savedShorts = await Short.find({ savedBy: userId });
+
+  const likedSavedKeyword = [
+    ...likedVideos.map((v) => v.title),
+    ...likedShorts.map((s) => s.title),
+    ...savedVideos.map((v) => v.title),
+    ...savedShorts.map((s) => s.title),
+  ];
+
+  // Merge all keywords and clean them
+  const allKeyWords = [...new Set(
+    [...historyKeyword, ...likedSavedKeyword]
+      .filter(Boolean)
+      .flatMap((k) => k.split(" "))
+      .map((word) => word.trim().toLowerCase())
+      .filter((word) => word.length > 1)
+  )];
+
+  // Build regex conditions
+  const videoConditions = [];
+  const shortConditions = [];
+
+  allKeyWords.forEach((kw) => {
+    const safeKw = escapeRegex(kw);
+
+    videoConditions.push(
+      { title: { $regex: safeKw, $options: "i" } },
+      { description: { $regex: safeKw, $options: "i" } },
+      { tags: { $regex: safeKw, $options: "i" } }
+    );
+
+    shortConditions.push(
+      { title: { $regex: safeKw, $options: "i" } },
+      { tags: { $regex: safeKw, $options: "i" } }
+    );
+  });
+
+  // Fetch recommended content
+  const recommendedVideos = await Video.find({ $or: videoConditions })
+    .populate("channel comments.author comments.replies.author");
+
+  const recommendedShorts = await Short.find({ $or: shortConditions })
+    .populate("channel", "name avatar")
+    .populate("likes", "username avatar");
+
+  // Get IDs of recommended content
+  const recommendedVideoIds = recommendedVideos.map((v) => v._id);
+  const recommendedShortIds = recommendedShorts.map((s) => s._id);
+
+  // Get remaining content (not recommended)
+  const remainingVideos = await Video.find({
+    _id: { $nin: recommendedVideoIds },
+  })
+    .sort({ createdAt: -1 })
+    .populate("channel");
+
+  const remainingShorts = await Short.find({
+    _id: { $nin: recommendedShortIds },
+  })
+    .sort({ createdAt: -1 })
+    .populate("channel");
+
+  return res.status(200).json(
+    new ApiResponse(200, {
+      recommendedVideos,
+      recommendedShorts,
+      remainingVideos,
+      remainingShorts,
+      usedKeyword: allKeyWords,
+    })
+  );
+});
+
+
 export {
   registerUser,
   logIn,
@@ -407,5 +514,7 @@ export {
   googleAuth,
   sendOtp,
   verifyOtp,
-  resetPassword
+  resetPassword,
+  getRecommendedContent
+
 };
