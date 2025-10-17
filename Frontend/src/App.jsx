@@ -31,6 +31,7 @@ import ChannelPage from "./pages/Channel/ChannelPage";
 import LikeContent from "./pages/LikeContent/LikeContent";
 import SaveContent from "./pages/SaveVideos/SaveContent";
 import GetHistory from "./customHooks/GetHistory";
+import GetRecommendedContent from "./customHooks/GetRecommendedContent";
 
 export const serverUrl = "http://localhost:8080";
 
@@ -48,6 +49,7 @@ function App() {
   GetContentData();
   GetSubscribeData();
   GetHistory();
+  GetRecommendedContent();
 
   const { userData } = useSelector((state) => state.user);
   function ChannelPageWrapper() {

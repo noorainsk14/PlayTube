@@ -36,6 +36,7 @@ import AllVideosPage from "../components/AllVideosPage.jsx";
 import AllShortsPage from "../components/AllShortsPage.jsx";
 import SearchResults from "../components/SearchResult.jsx";
 import FilterResults from "../components/FilterResults.jsx";
+import RecommendedContent from "./RecommendedContent.jsx";
 
 const Home = () => {
   const [sideBarOpen, setSideBarOpen] = useState(true);
@@ -758,8 +759,15 @@ const Home = () => {
               )}
               {searchData && <SearchResults searchResults={searchData} />}
               {filterData && <FilterResults filterResults={filterData} />}
-              <AllVideosPage />
-              <AllShortsPage />
+
+              {userData ? (
+                <RecommendedContent />
+              ) : (
+                <>
+                  {" "}
+                  <AllVideosPage /> <AllShortsPage />
+                </>
+              )}
             </div>
           </>
         )}
