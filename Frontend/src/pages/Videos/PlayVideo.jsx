@@ -53,46 +53,45 @@ const PlayVideo = () => {
   const [loading2, setLoading2] = useState(false);
   const hasViewed = useRef(false);
 
-  // useEffect(() => {
-  //   if (!videoData) {
-  //     return;
-  //   }
-  //   const currentVideo = videoData.find((v) => v._id.toString() === videoId);
+  useEffect(() => {
+    if (!videoData) {
+      return;
+    }
+    const currentVideo = videoData.find((v) => v._id.toString() === videoId);
 
-  //   if (currentVideo) {
-  //     setVideo(currentVideo);
+    if (currentVideo) {
+      setVideo(currentVideo);
 
-  //     setChannel(currentVideo.channel);
-  //     setComment(currentVideo.comments);
-  //   }
+      setChannel(currentVideo.channel);
+      setComment(currentVideo.comments);
+    }
+  }, [videoId, videoData]);
 
-  //   const addViews = async () => {
-  //     if (hasViewed.current) return;
-  //     try {
-  //       const result = await axios.put(
-  //         `${serverUrl}/api/v1/video/${videoId}/add-view`,
-  //         {},
-  //         { withCredentials: true }
-  //       );
-  //       setVideo((prev) =>
-  //         prev ? { ...prev, views: result.data.data.video.views } : prev
-  //       );
-  //       const updatedVideo = result.data.data.video;
+  const addViews = async () => {
+    if (hasViewed.current) return; // if already viewed, stop
+    hasViewed.current = true;
+    try {
+      const result = await axios.put(
+        `${serverUrl}/api/v1/video/${videoId}/add-view`,
+        {},
+        { withCredentials: true }
+      );
+      setVideo((prev) =>
+        prev ? { ...prev, views: result.data.data.video.views } : prev
+      );
+      const updatedVideo = result.data.data.video;
 
-  //       // 🔁 Replace the old video in the videoData array
-  //       const updatedVideoData = videoData.map((v) =>
-  //         v._id === videoId ? updatedVideo : v
-  //       );
+      // 🔁 Replace the old video in the videoData array
+      const updatedVideoData = videoData.map((v) =>
+        v._id === videoId ? updatedVideo : v
+      );
 
-  //       dispatch(setVideoData(updatedVideoData));
-  //       hasViewed.current = true;
-  //     } catch (error) {
-  //       console.log(error.response.data.message);
-  //     }
-  //   };
-
-  //   addViews();
-  // }, [videoId, videoData]);
+      dispatch(setVideoData(updatedVideoData));
+      hasViewed.current = true;
+    } catch (error) {
+      console.log(error.response.data.message);
+    }
+  };
 
   useEffect(() => {
     const fetchVideo = async () => {
@@ -379,6 +378,7 @@ const PlayVideo = () => {
             ref={videoRef}
             onPlay={() => {
               setIsPlaying(true);
+              addViews();
             }}
             onPause={() => {
               setIsPlaying(false);
