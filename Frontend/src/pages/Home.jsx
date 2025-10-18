@@ -510,7 +510,11 @@ const Home = () => {
                 )}
                 {userData?.channel && (
                   <li>
-                    <button>
+                    <button
+                      onClick={() => {
+                        navigate("/PT-Studio/dashboard");
+                      }}
+                    >
                       <SiYoutubestudio
                         size={20}
                         className="w-5 text-orange-500"

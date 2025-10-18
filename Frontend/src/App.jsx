@@ -32,6 +32,11 @@ import LikeContent from "./pages/LikeContent/LikeContent";
 import SaveContent from "./pages/SaveVideos/SaveContent";
 import GetHistory from "./customHooks/GetHistory";
 import GetRecommendedContent from "./customHooks/GetRecommendedContent";
+import PTStudio from "./pages/PtStudio/PTStudio";
+import Dashboard from "./components/PTStudioCompo/Dashboard";
+import Content from "./components/PTStudioCompo/Content";
+import Analytics from "./components/PTStudioCompo/Analytics";
+import Revenue from "./components/PTStudioCompo/Revenue";
 
 export const serverUrl = "http://localhost:8080";
 
@@ -238,6 +243,23 @@ function App() {
             </ProtectRoute>
           }
         />
+
+        <Route
+          path="/PT-studio"
+          element={
+            <ProtectRoute userData={userData}>
+              <PTStudio />
+            </ProtectRoute>
+          }
+        >
+          {/* Redirect /PT-studio to /PT-studio/dashboard */}
+          <Route index element={<Navigate to="dashboard" replace />} />
+
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="content" element={<Content />} />
+          <Route path="analytics" element={<Analytics />} />
+          <Route path="revenue" element={<Revenue />} />
+        </Route>
       </Routes>
     </>
   );

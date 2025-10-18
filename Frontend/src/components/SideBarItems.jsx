@@ -1,4 +1,4 @@
-const SideBarItems = ({ icon, text, open, selected, onClick }) => {
+const SideBarItems = ({ icon, text, open, selected, onClick, active }) => {
   return (
     <button
       className={`flex items-center gap-4 p-2 rounded w-full transition-colors ${

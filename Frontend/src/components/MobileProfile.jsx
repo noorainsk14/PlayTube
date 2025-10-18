@@ -185,7 +185,13 @@ const MobileProfile = () => {
             navigate("/liked-content");
           }}
         />
-        <MobileProfileMenu icon={<SiYoutubestudio />} text={"PT Studio"} />
+        <MobileProfileMenu
+          onClick={() => {
+            navigate("/PT-Studio");
+          }}
+          icon={<SiYoutubestudio />}
+          text={"PT Studio"}
+        />
       </div>
     </div>
   );
