@@ -60,13 +60,30 @@ const createChannel = asyncHandler(async (req, res) => {
 
 const getChannelData = asyncHandler(async (req, res) => {
   const userId = req.user?._id; // Extract just the user ID
-  console.log("channel user", userId);
-  console.log("User from JWT middleware:", req.user);
 
   const channel = await Channel.findOne({ owner: userId })
     .populate("owner")
     .populate("videos")
-    .populate("shorts");
+    .populate("shorts")
+    .populate("subscribers")
+    .populate({
+      path: "playlist",
+      populate:{
+        path: "videos",
+        model: "Video",
+        populate:{
+          path: "channel",
+          model: "Channel"
+        }
+      }
+    })
+    .populate({
+      path: "communityPost",
+      populate:{
+        path: "channel",
+        model: "Channel"
+      }
+    })
 
   if (!channel) {
     throw new ApiError(404, "Channel is not found");
