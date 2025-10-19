@@ -17,6 +17,8 @@ const PostCard = ({ post }) => {
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
 
+  console.log(post);
+
   const handleLike = async () => {
     try {
       const result = await axios.post(
@@ -92,7 +94,7 @@ const PostCard = ({ post }) => {
         <p className="text-base text-gray-200">{post.content}</p>
         {post?.image && (
           <img
-            src={post?.img}
+            src={post?.image}
             className="w-90 h-80 object-cover rounded-xl mt-4 shadow-lg"
           />
         )}

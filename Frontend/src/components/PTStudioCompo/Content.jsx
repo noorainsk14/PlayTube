@@ -1,13 +1,39 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { serverUrl } from "../../App";
+import { setChannelData } from "../../redux/userSlice";
+import { showErrorToast, showSuccessToast } from "../../helper/toastHelper";
 
 const Content = () => {
   const { channelData } = useSelector((state) => state.user);
   const [activeTab, setActiveTab] = useState("Videos");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleDeletePost = async (postId) => {
+    if (!window.confirm("Are you sure you want to delete this post ?")) return;
+
+    try {
+      await axios.delete(`${serverUrl}/api/v1/post/${postId}/delete-post`, {
+        withCredentials: true,
+      });
+
+      const updatePosts = channelData.communityPost.filter(
+        (p) => p?._id !== postId
+      );
+
+      dispatch(setChannelData({ ...channelData, communityPost: updatePosts }));
+
+      showSuccessToast("Post deleted successfully.");
+    } catch (error) {
+      console.log(error);
+      showErrorToast(error?.response?.data?.message || "Failed to delete post");
+    }
+  };
 
   return (
     <div className="text-white min-h-screen pt-5 px-4 sm:px-6 mb-16">
@@ -278,6 +304,9 @@ const Content = () => {
                       </td>
                       <td className="p-3 ">
                         <MdDelete
+                          onClick={() => {
+                            handleDeletePost(s?._id);
+                          }}
                           className="cursor-pointer hover:text-orange-400"
                           size={20}
                         />
@@ -305,10 +334,12 @@ const Content = () => {
                   <div className="flex px-4 py-3 border-t border-gray-700 items-center justify-between text-sm text-gray-400">
                     <span>{new Date(s.createdAt).toLocaleDateString()}</span>
                     <MdDelete
+                      onClick={() => {
+                        handleDeletePost(s?._id);
+                      }}
                       size={20}
                       className="cursor-pointer hover:text-orange-400"
                     />
-                    {/* <FaEdit onClick={()=>{navigate(`/PT-studio/manage-video/${v._id}`)}}/> */}
                   </div>
                 </div>
               ))}
