@@ -130,7 +130,12 @@ const Content = () => {
                       <td className="p-3 text-start">{s?.title}</td>
                       <td className="p-3 text-start">{s?.views}</td>
                       <td className="p-3 ">
-                        <FaEdit className="cursor-pointer hover:text-orange-400" />
+                        <FaEdit
+                          onClick={() => {
+                            navigate(`/PT-studio/update-short/${s._id}`);
+                          }}
+                          className="cursor-pointer hover:text-orange-400"
+                        />
                       </td>
                     </tr>
                   ))}
@@ -154,8 +159,12 @@ const Content = () => {
                   </div>
                   <div className="flex px-4 py-3 border-t border-gray-700 items-center justify-between text-sm text-gray-400">
                     <span>{s?.views}</span>
-                    <FaEdit className="cursor-pointer hover:text-orange-400" />
-                    {/* <FaEdit onClick={()=>{navigate(`/PT-studio/manage-video/${v._id}`)}}/> */}
+                    <FaEdit
+                      onClick={() => {
+                        navigate(`/PT-studio/update-short/${s._id}`);
+                      }}
+                      className="cursor-pointer hover:text-orange-400"
+                    />
                   </div>
                 </div>
               ))}
