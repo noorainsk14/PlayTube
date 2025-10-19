@@ -105,8 +105,81 @@ const getSavedPlaylist = asyncHandler(async(req, res) => {
   )
 })
 
+const fetchPlaylist = asyncHandler(async(req, res) => {
+  const {playlistId} = req.params;
+  const playlist = await Playlist.findById(playlistId).populate("channel", "name avatar").populate(
+    {
+      path:"videos",
+      populate: {path: "channel", select : "name avatar"}
+    }
+  )
+
+  if(!playlist){
+    throw new ApiError(404, "Playlist not found")
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, {playlist}, "Playlist fetched !")
+  )
+})
+
+const updatePlaylist = asyncHandler(async(req, res) => {
+  const {playlistId} = req.params;
+  const {title, description, addVideos = [], removeVideos =[] } = req.body;
+
+  const playlist = await Playlist.findById(playlistId)
+  if(!playlist){
+    throw new ApiError(404, "Playlist not found.")
+  }
+
+  if(title){
+    playlist.title = title
+  }
+
+  if(description){
+    playlist.description= description
+  }
+  //add videos avoid duplicates
+  playlist.videos.push(...addVideos);
+  playlist.videos = [...new Set(playlist.videos.map(v => v.toString()))]
+
+  //remove videos
+  playlist.videos = playlist.videos.filter(
+    vid => !removeVideos.includes(vid.toString())
+  )
+
+  await playlist.save();
+ 
+  return res.status(200).json(
+    new ApiResponse(200, {playlist}, "PLaylist updated successfully!")
+  )
+
+})
+
+const deletePlaylist= asyncHandler(async(req, res) => {
+  const {playlistId} = req.params;
+  const playlist = await Playlistlaylist.findById(playlistId)
+   if(!playlist){
+    throw new ApiError(404, "playlist not found.")
+  }
+
+  await Channel.findByIdAndUpdate(playlist.channel, {
+    $pull: {playlist: playlist._id},
+  })
+
+  await Playlist.findByIdAndDelete(playlistId)
+
+  return res.status(200).json(
+    new ApiResponse(200, {}, "PLaylist deleted successfully")
+  )
+
+})
+
 export {
     createPlaylist,
     toggleSavePlaylist,
-    getSavedPlaylist
+    getSavedPlaylist,
+    fetchPlaylist,
+    updatePlaylist,
+    deletePlaylist
 }
