@@ -60,7 +60,12 @@ const Content = () => {
                       <td className="p-3 text-start">{v?.title}</td>
                       <td className="p-3 text-start">{v?.views}</td>
                       <td className="p-3 ">
-                        <FaEdit className="cursor-pointer hover:text-orange-400" />
+                        <FaEdit
+                          onClick={() => {
+                            navigate(`/PT-studio/update-video/${v._id}`);
+                          }}
+                          className="cursor-pointer hover:text-orange-400"
+                        />
                       </td>
                     </tr>
                   ))}
@@ -82,8 +87,12 @@ const Content = () => {
                   </div>
                   <div className="flex px-4 py-3 border-t border-gray-700 items-center justify-between text-sm text-gray-400">
                     <span>{v?.views}</span>
-                    <FaEdit className="cursor-pointer hover:text-orange-400" />
-                    {/* <FaEdit onClick={()=>{navigate(`/PT-studio/manage-video/${v._id}`)}}/> */}
+                    <FaEdit
+                      className="cursor-pointer hover:text-orange-400"
+                      onClick={() => {
+                        navigate(`/PT-studio/update-video/${v._id}`);
+                      }}
+                    />
                   </div>
                 </div>
               ))}
@@ -185,7 +194,12 @@ const Content = () => {
                       <td className="p-3 text-start">{s?.title}</td>
                       <td className="p-3 text-start">{s?.videos?.length}</td>
                       <td className="p-3 ">
-                        <FaEdit className="cursor-pointer hover:text-orange-400" />
+                        <FaEdit
+                          onClick={() => {
+                            navigate(`/PT-studio/update-video/${v._id}`);
+                          }}
+                          className="cursor-pointer hover:text-orange-400"
+                        />
                       </td>
                     </tr>
                   ))}
@@ -209,7 +223,11 @@ const Content = () => {
                   <div className="flex px-4 py-3 border-t border-gray-700 items-center justify-between text-sm text-gray-400">
                     <span>{s?.videos?.length}</span>
                     <FaEdit className="cursor-pointer hover:text-orange-400" />
-                    {/* <FaEdit onClick={()=>{navigate(`/PT-studio/manage-video/${v._id}`)}}/> */}
+                    <FaEdit
+                      onClick={() => {
+                        navigate(`/PT-studio/update-video/${v._id}`);
+                      }}
+                    />
                   </div>
                 </div>
               ))}
