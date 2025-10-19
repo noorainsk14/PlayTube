@@ -329,6 +329,75 @@ const getSavedVideos = asyncHandler(async(req, res) => {
   )
 })
 
+const fetchVideo = asyncHandler(async(req, res) => {
+  const {videoId} = req.params;
+  const video = await Video.findById(videoId).populate("channel", "name avatar").populate("likes", "username avatar")
+
+  if(!video){
+    throw new ApiError(404, "Video not found")
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, {video}, "Video fetched !")
+  )
+})
+
+const updateVideo = asyncHandler(async(req, res) => {
+  const {videoId} = req.params;
+  const {title, description, tags} = req.body;
+
+  const video = await Video.findById(videoId)
+  if(!video){
+    throw new ApiError(404, "Video not found.")
+  }
+
+  if(title){
+    video.title = title
+  }
+
+  if(description){
+    video.description= description
+  }
+  if(tags){
+    try {
+      video.tags = JSON.parse(tags);
+    } catch (error) {
+      video.tags = []
+    }
+  }
+
+  if(req.file){
+      const uploadedThumbnail = await uploadOnCloudinary(req.file.path)
+      video.thumbnail = uploadedThumbnail.secure_url
+  }
+
+  await video.save();
+ 
+  return res.status(200).json(
+    new ApiResponse(200, {video}, "Video updated successfully!")
+  )
+
+})
+
+const deleteVideo = asyncHandler(async(req, res) => {
+  const {videoId} = req.params;
+  const video = await Video.findById(videoId)
+   if(!video){
+    throw new ApiError(404, "Video not found.")
+  }
+
+  await Channel.findByIdAndUpdate(video.channel, {
+    $pull: {videos: video._id},
+  })
+
+  await Video.findByIdAndDelete(videoId)
+
+  return res.status(200).json(
+    new ApiResponse(200, {}, "Video deleted successfully")
+  )
+
+})
+
 
 export {
   createVideo,
@@ -341,5 +410,8 @@ export {
   addReply,
   getVideoById,
   getLikedVideos,
-  getSavedVideos
+  getSavedVideos,
+  fetchVideo,
+  updateVideo,
+  deleteVideo
 };
