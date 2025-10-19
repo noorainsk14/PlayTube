@@ -158,7 +158,7 @@ const updatePlaylist = asyncHandler(async(req, res) => {
 
 const deletePlaylist= asyncHandler(async(req, res) => {
   const {playlistId} = req.params;
-  const playlist = await Playlistlaylist.findById(playlistId)
+  const playlist = await Playlist.findById(playlistId)
    if(!playlist){
     throw new ApiError(404, "playlist not found.")
   }

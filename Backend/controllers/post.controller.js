@@ -150,10 +150,29 @@ const addReply = asyncHandler(async(req, res) => {
 
 })
 
+const deletePost = asyncHandler(async (req, res) => {
+  const {postId} = req.params;
+    const post = await Post.findById(postId)
+     if(!post){
+      throw new ApiError(404, "Post not found.")
+    }
+  
+    await Channel.findByIdAndUpdate(post.channel, {
+      $pull: {communityPost: post._id},
+    })
+  
+    await Post.findByIdAndDelete(postId)
+  
+    return res.status(200).json(
+      new ApiResponse(200, {}, "Post deleted successfully")
+    )
+})
+
 export {
     createPost,
     getAllPost,
     toggleLike,
     addComment,
-    addReply
+    addReply,
+    deletePost
 }
