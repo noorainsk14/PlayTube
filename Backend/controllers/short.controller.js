@@ -323,6 +323,71 @@ const getSavedShorts = asyncHandler(async(req, res) => {
   )
 })
 
+const fetchShort = asyncHandler(async(req, res) => {
+  const {shortId} = req.params;
+  const short = await Short.findById(shortId).populate("channel", "name avatar").populate("likes", "username avatar")
+
+  if(!short){
+    throw new ApiError(404, "Short not found")
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, {short}, "Short fetched !")
+  )
+})
+
+const updateShort = asyncHandler(async(req, res) => {
+  const {shortId} = req.params;
+  const {title, description, tags} = req.body;
+
+  const short = await Short.findById(shortId)
+  if(!short){
+    throw new ApiError(404, "Short not found.")
+  }
+
+  if(title){
+    short.title = title
+  }
+
+  if(description){
+    short.description= description
+  }
+  if(tags){
+    try {
+      short.tags = JSON.parse(tags);
+    } catch (error) {
+      short.tags = []
+    }
+  }
+
+ 
+  await short.save();
+ 
+  return res.status(200).json(
+    new ApiResponse(200, {short}, "Short updated successfully!")
+  )
+
+})
+
+const deleteShort = asyncHandler(async(req, res) => {
+  const {shortId} = req.params;
+  const short = await Short.findById(shortId)
+   if(!short){
+    throw new ApiError(404, "Short not found.")
+  }
+
+  await Channel.findByIdAndUpdate(short.channel, {
+    $pull: {shorts: short._id},
+  })
+
+  await Short.findByIdAndDelete(shortId)
+
+  return res.status(200).json(
+    new ApiResponse(200, {}, "Short deleted successfully")
+  )
+
+})
+
 export {
   uploadShort,
   getAllShorts,
@@ -334,5 +399,8 @@ export {
   addReply,
   getVideoById,
   getLikedShorts,
-  getSavedShorts
+  getSavedShorts,
+  fetchShort,
+  updateShort,
+  deleteShort
 };

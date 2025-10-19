@@ -4,6 +4,8 @@ import upload from "../middlewares/multer.middleware.js";
 import {
   addComment,
   addReply,
+  deleteShort,
+  fetchShort,
   getAllShorts,
   getLikedShorts,
   getSavedShorts,
@@ -12,6 +14,7 @@ import {
   toggleDisLike,
   toggleLike,
   toggleSave,
+  updateShort,
   uploadShort,
 } from "../controllers/short.controller.js";
 
@@ -34,4 +37,7 @@ router.route("/:shortId/add-comment").post(verifyJwt, addComment);
 router.route("/:shortId/:commentId/add-reply").post(verifyJwt, addReply);
 router.route("/:shortId/:commentId/add-reply").post(verifyJwt, addReply);
 router.route("/:shortId").get(getVideoById);
+router.route("/:shortId/fetch-short").get(fetchShort);
+router.route("/:shortId/update-short").post(  verifyJwt,  updateShort);
+router.route("/:shortId/delete-short").delete(verifyJwt, deleteShort);
 export default router;
