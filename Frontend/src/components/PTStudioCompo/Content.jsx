@@ -205,7 +205,7 @@ const Content = () => {
                       <td className="p-3 ">
                         <FaEdit
                           onClick={() => {
-                            navigate(`/PT-studio/update-video/${v._id}`);
+                            navigate(`/PT-studio/update-playlist/${s._id}`);
                           }}
                           className="cursor-pointer hover:text-orange-400"
                         />
@@ -234,7 +234,7 @@ const Content = () => {
                     <FaEdit className="cursor-pointer hover:text-orange-400" />
                     <FaEdit
                       onClick={() => {
-                        navigate(`/PT-studio/update-video/${v._id}`);
+                        navigate(`/PT-studio/update-playlist/${s._id}`);
                       }}
                     />
                   </div>

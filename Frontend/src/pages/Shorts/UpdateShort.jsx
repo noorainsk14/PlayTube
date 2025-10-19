@@ -37,7 +37,7 @@ const UpdateShort = () => {
       } catch (error) {
         showErrorToast("Failed to load video.");
         console.log(error);
-        // navigate("/");
+        navigate("/");
       }
     };
 
@@ -89,7 +89,7 @@ const UpdateShort = () => {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure, You want to delete this video")) return;
+    if (!window.confirm("Are you sure, You want to delete this short")) return;
 
     setLoading1(true);
     try {

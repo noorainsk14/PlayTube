@@ -39,6 +39,7 @@ import Analytics from "./components/PTStudioCompo/Analytics";
 import Revenue from "./components/PTStudioCompo/Revenue";
 import UpdateVideo from "./pages/Videos/UpdateVideo";
 import UpdateShort from "./pages/Shorts/UpdateShort";
+import UpdatePlaylist from "./pages/Playlist/UpdatePlaylist";
 
 export const serverUrl = "http://localhost:8080";
 
@@ -263,6 +264,10 @@ function App() {
           <Route path="revenue" element={<Revenue />} />
           <Route path="update-video/:videoId" element={<UpdateVideo />} />
           <Route path="update-short/:shortId" element={<UpdateShort />} />
+          <Route
+            path="update-playlist/:playlistId"
+            element={<UpdatePlaylist />}
+          />
         </Route>
       </Routes>
     </>
