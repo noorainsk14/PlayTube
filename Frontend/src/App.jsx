@@ -11,7 +11,7 @@ import History from "./pages/History/History";
 import GetCurrentUser from "./customHooks/GetCurrentUser";
 import MobileProfile from "./components/MobileProfile";
 import ForgetPassword from "./pages/ForgetPassword";
-import CreateChannel from "./pages/Channel/createChannel";
+import CreateChannel from "./pages/Channel/CreateChannel";
 import ViewChannel from "./pages/Channel/ViewChannel";
 import GetChannelData from "./customHooks/GetChannelData";
 import UpdateChannel from "./pages/Channel/UpdateChannel";
