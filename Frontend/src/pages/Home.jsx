@@ -732,12 +732,6 @@ const Home = () => {
           onClick={() => {
             setActive("Subscriptions");
 
-            // ✅ Check if user logged in
-            if (!channelData) {
-              showErrorToast("Please create a channel first!");
-              return;
-            }
-
             navigate("/subscriptions");
           }}
         />
