@@ -40,7 +40,7 @@ import UpdateVideo from "./pages/Videos/UpdateVideo";
 import UpdateShort from "./pages/Shorts/UpdateShort";
 import UpdatePlaylist from "./pages/Playlist/UpdatePlaylist";
 
-export const serverUrl = "http://localhost:8080";
+export const serverUrl = import.meta.env.VITE_SERVER_URL;
 
 const ProtectRoute = ({ userData, children }) => {
   if (!userData) {
