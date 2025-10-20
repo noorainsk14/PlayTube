@@ -42,7 +42,6 @@ const PlayVideo = () => {
   const [newComment, setNewComment] = useState("");
   const navigate = useNavigate();
   const { userData } = useSelector((state) => state.user);
-  const { channelData } = useSelector((state) => state.user);
   const suggestVideo =
     videoData?.filter((v) => v._id !== videoId).slice(0, 10) || [];
   const suggestShort = shortData?.slice(0, 10) || [];
@@ -242,7 +241,7 @@ const PlayVideo = () => {
         {},
         { withCredentials: true }
       );
-      console.log(result.data.data.video);
+      //console.log(result.data.data.video);
       setVideo(result.data.data.video);
     } catch (error) {
       console.log(error.response.data.message);
@@ -256,7 +255,7 @@ const PlayVideo = () => {
         {},
         { withCredentials: true }
       );
-      console.log(result.data.data.video);
+      //console.log(result.data.data.video);
       setVideo(result.data.data.video);
     } catch (error) {
       console.log(error.response.data.message);
@@ -288,7 +287,7 @@ const PlayVideo = () => {
         { message: newComment },
         { withCredentials: true }
       );
-      console.log(result.data?.data?.video?.comments);
+      //console.log(result.data?.data?.video?.comments);
       setComment((prev) => [
         result.data?.data?.video?.comments.slice(-1)[0],
         ...prev,
@@ -316,7 +315,7 @@ const PlayVideo = () => {
         { message: replyText },
         { withCredentials: true }
       );
-      console.log(result.data?.data?.populatedVideo?.comments);
+      //console.log(result.data?.data?.populatedVideo?.comments);
       const updatedComments = result.data?.data?.populatedVideo?.comments;
       setComment(updatedComments);
     } catch (error) {
@@ -336,7 +335,7 @@ const PlayVideo = () => {
           { contentId: videoId, contentType: "Video" },
           { withCredentials: true }
         );
-        console.log(result.data?.data);
+        //console.log(result.data?.data);
       } catch (error) {
         console.log("error adding history:", error);
       }
@@ -358,7 +357,7 @@ const PlayVideo = () => {
   }, [channel?.subscribers, userData?._id]);
 
   return (
-    <div className="flex bg-[#0f0f0f] text-white flex-col lg:flex-row gap-6 p-4 lg:p-6">
+    <div className="flex mt-10 bg-[#0f0f0f] text-white flex-col lg:flex-row gap-6 p-4 lg:p-6">
       <div className="flex-1">
         {/* video player */}
         <div

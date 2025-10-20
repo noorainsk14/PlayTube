@@ -15,9 +15,9 @@ const GetCurrentUser = () => {
           { withCredentials: true }
         );
         dispatch(setUserData(result.data.data));
-        console.log(result.data);
+        //console.log(result.data);
       } catch (error) {
-        console.log(error);
+        //console.log(error);
         dispatch(setUserData(null));
       }
     };

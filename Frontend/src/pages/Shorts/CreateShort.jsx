@@ -38,7 +38,7 @@ const CreateShort = () => {
           withCredentials: true,
         }
       );
-      console.log(result.data.data);
+      //console.log(result.data.data);
       showSuccessToast("Short uploaded successfully !!");
       dispatch(setShortData([...shortData, result.data.data]));
       const updateChannel = {

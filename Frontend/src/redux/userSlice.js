@@ -1,9 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const storedUser = localStorage.getItem("userData")
+  ? JSON.parse(localStorage.getItem("userData"))
+  : null;
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    userData: null,
+    userData: storedUser,
     channelData: null,
     allChannelData:null,
     subscribedChannels:null,
@@ -20,7 +24,30 @@ const userSlice = createSlice({
   reducers: {
     setUserData: (state, action) => {
       state.userData = action.payload;
+
+      // 🔥 Save to localStorage
+      if (action.payload) {
+        localStorage.setItem("userData", JSON.stringify(action.payload));
+      } else {
+        localStorage.removeItem("userData");
+      }
     },
+    logoutUser: (state) => {
+  state.userData = null;
+  state.channelData = null;
+  state.allChannelData = null;
+  state.subscribedChannels = null;
+  state.subscribedVideos = null;
+  state.subscribedShorts = null;
+  state.subscribedPlaylists = null;
+  state.subscribedPosts = null;
+  state.videoHistory = null;
+  state.shortHistory = null;
+  state.recommendedContent = null;
+
+  localStorage.removeItem("userData");
+},
+
     setChannelData: (state, action) => {
       state.channelData = action.payload;
     },
@@ -54,6 +81,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { setUserData, setChannelData,setAllChannelData,setSubscribedChannels,setSubscribedVideos,setSubscribedShorts,setSubscribedPlaylists,setSubscribedPosts,SetVideoHistory,SetShortHistory,SetRecommendedContent } = userSlice.actions;
+export const { setUserData,logoutUser, setChannelData,setAllChannelData,setSubscribedChannels,setSubscribedVideos,setSubscribedShorts,setSubscribedPlaylists,setSubscribedPosts,SetVideoHistory,SetShortHistory,SetRecommendedContent } = userSlice.actions;
 
 export default userSlice.reducer;

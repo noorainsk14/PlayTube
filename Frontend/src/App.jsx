@@ -4,7 +4,6 @@ import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import { Toaster } from "react-hot-toast";
-import ChangePassword from "./pages/ChangePassword";
 import Shorts from "./pages/Shorts/Shorts";
 import Subscriptions from "./pages/Subscriptions/Subscriptions";
 import Playlist from "./pages/Playlist/Playlist";
@@ -143,14 +142,7 @@ function App() {
               </ProtectRoute>
             }
           />
-          <Route
-            path="mobile-profile"
-            element={
-              <ProtectRoute userData={userData}>
-                <MobileProfile />
-              </ProtectRoute>
-            }
-          />
+          <Route path="mobile-profile" element={<MobileProfile />} />
           <Route
             path="view-channel"
             element={
@@ -209,6 +201,14 @@ function App() {
             }
           />
           <Route
+            path="/play-video/:videoId"
+            element={
+              <ProtectRoute userData={userData}>
+                <PlayVideo />
+              </ProtectRoute>
+            }
+          />
+          <Route
             path="create"
             element={
               <ProtectRoute userData={userData}>
@@ -228,21 +228,12 @@ function App() {
 
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<SignIn />} />
-        <Route path="/change-password" element={<ChangePassword />} />
         <Route path="/forget-password" element={<ForgetPassword />} />
         <Route
           path="/create-channel"
           element={
             <ProtectRoute userData={userData}>
               <CreateChannel />
-            </ProtectRoute>
-          }
-        />
-        <Route
-          path="/play-video/:videoId"
-          element={
-            <ProtectRoute userData={userData}>
-              <PlayVideo />
             </ProtectRoute>
           }
         />

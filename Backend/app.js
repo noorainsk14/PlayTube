@@ -14,8 +14,8 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
+
 //import routes
-// import error handler
 import errorHandler from "./utils/errorHandler.js";
 import { responseFormatter } from "./utils/responseFormatter.js";
 import userRouter from "./routes/user.route.js";

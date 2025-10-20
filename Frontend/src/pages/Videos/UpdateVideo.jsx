@@ -33,7 +33,7 @@ const UpdateVideo = () => {
           `${serverUrl}/api/v1/video/${videoId}/fetch-video`,
           { withCredentials: true }
         );
-        console.log("fetch video :", result.data?.data?.video);
+        //console.log("fetch video :", result.data?.data?.video);
         setVideo(result.data?.data?.video);
         setTitle(result.data?.data?.video?.title);
         setDescription(result.data?.data?.video?.description);
@@ -65,7 +65,7 @@ const UpdateVideo = () => {
         { withCredentials: true }
       );
       const response = result.data?.data?.video;
-      console.log(response);
+      // console.log(response);
       showSuccessToast("Video Updated Successfully");
 
       //update redux
@@ -92,7 +92,7 @@ const UpdateVideo = () => {
         `${serverUrl}/api/v1/video/${videoId}/delete-video`,
         { withCredentials: true }
       );
-      console.log(result);
+      //console.log(result);
 
       //remove from redux
       dispatch(setVideoData(videoData.filter((v) => v._id !== videoId)));

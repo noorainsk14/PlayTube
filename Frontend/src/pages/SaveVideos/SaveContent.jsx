@@ -5,13 +5,6 @@ import { SiYoutubeshorts } from "react-icons/si";
 import ShortCard from "../../components/ShortCard";
 import { GoVideo } from "react-icons/go";
 import VideoCard from "../../components/VideoCard";
-import { createSelector } from "@reduxjs/toolkit";
-import { useSelector } from "react-redux";
-
-const selectVideoData = createSelector(
-  (state) => state.content?.videoData,
-  (videoData) => videoData ?? []
-);
 
 const getVideoDuration = (url, callback) => {
   const video = document.createElement("video");
@@ -31,7 +24,6 @@ const getVideoDuration = (url, callback) => {
 const SaveContent = () => {
   const [savedVideo, setSavedVideo] = useState([]);
   const [savedShort, setSavedShort] = useState([]);
-  const videoData = useSelector(selectVideoData);
   const [duration, setDuration] = useState({});
 
   useEffect(() => {
@@ -51,14 +43,14 @@ const SaveContent = () => {
           `${serverUrl}/api/v1/video/saved-videos`,
           { withCredentials: true }
         );
-        console.log(videoResult.data?.data?.savedVideos);
+        //.log(videoResult.data?.data?.savedVideos);
         setSavedVideo(videoResult.data?.data?.savedVideos);
 
         const shortResult = await axios.get(
           `${serverUrl}/api/v1/short/saved-shorts`,
           { withCredentials: true }
         );
-        console.log(shortResult.data?.data?.savedShorts);
+        //console.log(shortResult.data?.data?.savedShorts);
         setSavedShort(shortResult.data?.data?.savedShorts);
       } catch (error) {
         console.log(error);

@@ -14,7 +14,12 @@ import { IoSettingsSharp, IoTelescope } from "react-icons/io5";
 import { Outlet, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FiLogIn } from "react-icons/fi";
-import { setUserData } from "../redux/userSlice";
+import {
+  logoutUser,
+  setAllChannelData,
+  setChannelData,
+  setUserData,
+} from "../redux/userSlice";
 import { showErrorToast, showSuccessToast } from "../helper/toastHelper";
 import {
   FaUserCircle,
@@ -27,7 +32,6 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import axios from "axios";
 import { serverUrl } from "../App";
 import { signInWithPopup } from "firebase/auth";
@@ -45,7 +49,9 @@ const Home = () => {
   const [searchPopup, setSearchPopup] = useState(false);
   const [listening, setListening] = useState(false);
   const navigate = useNavigate();
-  const { userData, subscribedChannels } = useSelector((state) => state.user);
+  const { userData, subscribedChannels, channelData } = useSelector(
+    (state) => state.user
+  );
   const location = useLocation();
   const dispatch = useDispatch();
   const [input, setInput] = useState("");
@@ -93,7 +99,7 @@ const Home = () => {
       setInput(transcript);
       setListening(false);
       await handleSearchData(transcript);
-      console.log(transcript);
+      //console.log(transcript);
     };
     recognitionRef.current.onerror = (err) => {
       console.error("Recognition eroor: ", err);
@@ -119,7 +125,7 @@ const Home = () => {
         { withCredentials: true }
       );
       setSearchData(result.data?.data);
-      console.log(result?.data?.data);
+      //console.log(result?.data?.data);
       setInput("");
       setSearchPopup(false);
 
@@ -192,11 +198,11 @@ const Home = () => {
       });
 
       navigate("/");
-      console.log("Category filter merged:", {
-        ...result.data?.data,
-        videos: [...videos, ...channelVideos],
-        shorts: [...shorts, ...channelShorts],
-      });
+      // console.log("Category filter merged:", {
+      //   ...result.data?.data,
+      //   videos: [...videos, ...channelVideos],
+      //   shorts: [...shorts, ...channelShorts],
+      // });
 
       if (
         videos.length > 0 ||
@@ -224,8 +230,10 @@ const Home = () => {
           withCredentials: true,
         }
       );
-      dispatch(setUserData(null));
-      console.log(signOut);
+      dispatch(logoutUser());
+      dispatch(setChannelData(null));
+      dispatch(setAllChannelData(null));
+      //console.log(signOut);
       showSuccessToast("SignOut Successfull !");
     } catch (error) {
       console.log(error);
@@ -260,7 +268,7 @@ const Home = () => {
         }
       );
 
-      dispatch(setUserData(result.data));
+      dispatch(setUserData(result.data?.data));
       showSuccessToast("Google Authentication Successfully!!");
     } catch (error) {
       console.log(error);
@@ -362,7 +370,10 @@ const Home = () => {
                 ></path>{" "}
               </svg>
             </button>
-            <div className="flex items-center gap-[5px]">
+            <div
+              onClick={() => navigate("/")}
+              className="flex items-center gap-[5px]"
+            >
               <img src={logo} alt="logo" className="w-10" />
               <span className="text-white font-bold text-xl tracking-tight font-robto">
                 PlayTube
@@ -664,7 +675,6 @@ const Home = () => {
                       {ch?.name}
                     </span>
                   )}
-                  {ch.name}
                 </button>
               ))}
             </div>
@@ -696,9 +706,23 @@ const Home = () => {
         <MobileSizeNav
           icon={<IoIosAddCircle size={40} />}
           active={active === "+"}
-          onClick={() => {
+          onClick={async () => {
             setActive("+");
-            navigate("/create");
+            try {
+              const res = await axios.get(
+                `${serverUrl}/api/v1/channel/get-channel`,
+                {
+                  withCredentials: true,
+                }
+              );
+              if (res.data.data?.channel?._id) {
+                navigate("/create");
+              } else {
+                navigate("/create-channel");
+              }
+            } catch {
+              navigate("/create-channel");
+            }
           }}
         />
         <MobileSizeNav
@@ -707,6 +731,13 @@ const Home = () => {
           active={active === "Subscriptions"}
           onClick={() => {
             setActive("Subscriptions");
+
+            // ✅ Check if user logged in
+            if (!channelData) {
+              showErrorToast("Please create a channel first!");
+              return;
+            }
+
             navigate("/subscriptions");
           }}
         />

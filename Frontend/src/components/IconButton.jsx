@@ -12,7 +12,7 @@ const IconButton = ({ icon: Icon, active, label, count, onClick }) => {
         } p-3 rounded-full hover:bg-gray-700 transition`}
       >
         <Icon
-          size={20}
+          size={18}
           className={`${active ? "text-black" : "text-white"} `}
         />
       </div>

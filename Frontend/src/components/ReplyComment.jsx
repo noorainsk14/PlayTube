@@ -20,7 +20,7 @@ const ReplyComment = ({ comment, handleReply }) => {
           <button
             className="bg-orange-600 mb-4 hover:bg-orange-700 text-white px-4 py-2 rounded-lg whitespace-nowrap"
             onClick={() => {
-              handleReply({comment._id:comment._id,replyText: replyText}),
+              handleReply({ comment_id: comment._id, replyText: replyText }),
                 setReplyText(""),
                 setShowReplyInput(false);
             }}

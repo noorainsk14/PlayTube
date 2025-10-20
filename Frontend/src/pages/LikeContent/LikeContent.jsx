@@ -51,14 +51,14 @@ const LikeContent = () => {
           `${serverUrl}/api/v1/video/liked-videos`,
           { withCredentials: true }
         );
-        console.log(videoResult.data?.data?.likeVideos);
+        //console.log(videoResult.data?.data?.likeVideos);
         setLikedvideo(videoResult.data?.data?.likeVideos);
 
         const shortResult = await axios.get(
           `${serverUrl}/api/v1/short/liked-shorts`,
           { withCredentials: true }
         );
-        console.log(shortResult.data?.data?.likeShorts);
+        //console.log(shortResult.data?.data?.likeShorts);
         setLikedShort(shortResult.data?.data?.likeShorts);
       } catch (error) {
         console.log(error);

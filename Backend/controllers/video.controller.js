@@ -247,7 +247,7 @@ const addReply = asyncHandler(async(req, res) => {
   }
 
   const comment = await  video.comments.id(commentId)
-  console.log("comment =",comment)
+  //console.log("comment =",comment)
   if(!comment){
     throw new ApiError(404, "Comment not found !")
   }

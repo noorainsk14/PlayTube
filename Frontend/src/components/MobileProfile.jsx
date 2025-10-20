@@ -31,7 +31,7 @@ import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../utils/firebase";
 
 const MobileProfile = () => {
-  const userData = useSelector((state) => state.user);
+  const { userData, channelData } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -45,7 +45,7 @@ const MobileProfile = () => {
         }
       );
       dispatch(setUserData(null));
-      console.log(signOut);
+      //console.log(signOut);
       showSuccessToast("SignOut Successfull !");
     } catch (error) {
       console.log(error);
@@ -93,18 +93,16 @@ const MobileProfile = () => {
       {userData && (
         <div className="p-4 flex items-center gap-4 border-b border-gray-800">
           <img
-            src={userData?.userData?.avatar}
+            src={userData?.avatar}
             alt="avatar"
             className="w-16 h-16 rounded-full object-cover"
           />
 
           <div className="flex flex-col">
             <span className="font-semibold text-lg">
-              {`@${userData?.userData?.username}`}
+              {`@${userData?.username}`}
             </span>
-            <span className="text-gray-400 text-sm">
-              {userData?.userData?.email}
-            </span>
+            <span className="text-gray-400 text-sm">{userData?.email}</span>
             <p
               className="text-sm text-blue-400 cursor-pointer"
               onClick={() => {
@@ -113,7 +111,7 @@ const MobileProfile = () => {
                   : navigate("/create-channel");
               }}
             >
-              {userData?.userData?.channel ? "view channel" : "create channel"}
+              {userData?.channel ? "view channel" : "create channel"}
             </p>
           </div>
         </div>
@@ -147,13 +145,27 @@ const MobileProfile = () => {
           SignIn with other account
         </button>
 
-        <button
-          className="bg-gray-800 text-nowrap px-3 py-1 rounded-2xl text-sm flex items-center justify-center gap-2"
-          onClick={handleSignOut}
-        >
-          <FiLogOut className="text-xl " />
-          SignOut
-        </button>
+        {!userData && (
+          <button
+            className="bg-gray-800 text-nowrap px-3 py-1 rounded-2xl text-sm flex items-center justify-center gap-2"
+            onClick={() => {
+              navigate("/sign-in");
+            }}
+          >
+            <FiLogIn className="text-xl" />
+            SignIn with Email
+          </button>
+        )}
+
+        {userData && (
+          <button
+            className="bg-gray-800 text-nowrap px-3 py-1 rounded-2xl text-sm flex items-center justify-center gap-2"
+            onClick={handleSignOut}
+          >
+            <FiLogOut className="text-xl " />
+            SignOut
+          </button>
+        )}
       </div>
 
       <div className="flex flex-col mt-[20px] ">
@@ -185,13 +197,15 @@ const MobileProfile = () => {
             navigate("/liked-content");
           }}
         />
-        <MobileProfileMenu
-          onClick={() => {
-            navigate("/PT-Studio");
-          }}
-          icon={<SiYoutubestudio />}
-          text={"PT Studio"}
-        />
+        {channelData && (
+          <MobileProfileMenu
+            onClick={() => {
+              navigate("/PT-Studio");
+            }}
+            icon={<SiYoutubestudio className="text-orange-600" />}
+            text={"PT Studio"}
+          />
+        )}
       </div>
     </div>
   );

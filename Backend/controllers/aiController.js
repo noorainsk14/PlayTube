@@ -34,7 +34,7 @@ The user query is: "${input}"
       model: "gemini-2.5-flash",
       contents: prompt,
     });
-    console.log(response.text);
+    //console.log(response.text);
 
     keyword = (response.text || input).trim().replace(/[\n\r]+/g, "");
   } catch (error) {

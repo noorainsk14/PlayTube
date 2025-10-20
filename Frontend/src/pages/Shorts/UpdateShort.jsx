@@ -29,7 +29,7 @@ const UpdateShort = () => {
           `${serverUrl}/api/v1/short/${shortId}/fetch-short`,
           { withCredentials: true }
         );
-        console.log("fetch short :", result.data?.data?.short);
+        //console.log("fetch short :", result.data?.data?.short);
         setShort(result.data?.data?.short);
         setTitle(result.data?.data?.short?.title);
         setDescription(result.data?.data?.short?.description);
@@ -63,7 +63,7 @@ const UpdateShort = () => {
         { withCredentials: true }
       );
       const response = result.data?.data?.short;
-      console.log(response);
+      //console.log(response);
       showSuccessToast("Short Updated Successfully");
 
       //update redux
@@ -97,7 +97,7 @@ const UpdateShort = () => {
         `${serverUrl}/api/v1/short/${shortId}/delete-short`,
         { withCredentials: true }
       );
-      console.log(result);
+      //console.log(result);
 
       //remove from redux
       dispatch(setShortData(shortData.filter((s) => s._id !== shortId)));

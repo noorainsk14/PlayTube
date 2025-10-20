@@ -1,31 +1,22 @@
-import React from "react";
 import {
   FaUserCircle,
   FaSearch,
-  FaMicrophone,
-  FaHome,
-  FaHistory,
-  FaList,
-  FaThumbsUp,
-  FaTimes,
   FaTachometerAlt,
   FaViadeo,
   FaChartBar,
   FaVideo,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { IoIosAddCircle } from "react-icons/io";
-import { GoVideo } from "react-icons/go";
-import { SiYoutubeshorts } from "react-icons/si";
-import { MdOutlineSubscriptions, MdOutlineSwitchAccount } from "react-icons/md";
+import { MdOutlineSwitchAccount } from "react-icons/md";
 import { SiYoutubestudio } from "react-icons/si";
 import { FcGoogle } from "react-icons/fc";
 import { TiUserAddOutline } from "react-icons/ti";
 import { FiLogOut } from "react-icons/fi";
-import { IoSettingsSharp, IoTelescope } from "react-icons/io5";
-import { Outlet, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { IoSettingsSharp } from "react-icons/io5";
+import { Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { FiLogIn } from "react-icons/fi";
 import SideBarItems from "../../components/SideBarItems";
 import { RiMoneyCnyCircleFill } from "react-icons/ri";
@@ -35,18 +26,9 @@ const PTStudio = () => {
   const [selectedItem, setSelectedItem] = useState("Dashboard");
   const [active, setActive] = useState("Home");
   const [searchPopup, setSearchPopup] = useState(false);
-  const [listening, setListening] = useState(false);
   const navigate = useNavigate();
-  const { userData, channelData, subscribedChannels } = useSelector(
-    (state) => state.user
-  );
-  const location = useLocation();
-  const dispatch = useDispatch();
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [loading1, setLoading1] = useState(false);
-  const [searchData, setSearchData] = useState("");
-  const [filterData, setFilterData] = useState("");
+  const { userData, channelData } = useSelector((state) => state.user);
+
   return (
     <div className="bg-[#0f0f0f] text-white min-h-screen relative">
       <header className="bg-[#0f0f0f]  text-white  h-15 p-2 border-b border-gray-800 fixed top-0 left-0 right-0 z-50">

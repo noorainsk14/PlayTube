@@ -41,7 +41,7 @@ const UpdatePlaylist = () => {
           `${serverUrl}/api/v1/playlist/${playlistId}/fetch-playlist`,
           { withCredentials: true }
         );
-        console.log("fetch short :", result.data?.data?.playlist);
+        //console.log("fetch short :", result.data?.data?.playlist);
         setPlaylist(result.data?.data?.playlist);
         setTitle(result.data?.data?.playlist?.title);
         setDescription(result.data?.data?.playlist?.description);
@@ -82,7 +82,7 @@ const UpdatePlaylist = () => {
         { withCredentials: true }
       );
       const response = result.data?.data?.playlist;
-      console.log(response);
+      //console.log(response);
       showSuccessToast("Playlist Updated Successfully");
 
       //update redux
@@ -110,7 +110,7 @@ const UpdatePlaylist = () => {
         `${serverUrl}/api/v1/playlist/${playlistId}/delete-playlist`,
         { withCredentials: true }
       );
-      console.log(result);
+      //console.log(result);
 
       //remove from redux
 

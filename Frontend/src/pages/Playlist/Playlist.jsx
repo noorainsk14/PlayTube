@@ -14,7 +14,7 @@ const Playlist = () => {
           `${serverUrl}/api/v1/playlist/saved-playlist`,
           { withCredentials: true }
         );
-        console.log(result.data?.data?.savedPlaylist);
+        //console.log(result.data?.data?.savedPlaylist);
         setSavedPlaylist(result.data?.data?.savedPlaylist);
       } catch (error) {
         console.log(error?.response?.data?.message || error);

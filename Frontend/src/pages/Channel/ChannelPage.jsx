@@ -54,7 +54,7 @@ const ChannelPage = () => {
         { channelId: channel._id },
         { withCredentials: true }
       );
-      console.log(response.data.data.updatedChannel);
+      //console.log(response.data.data.updatedChannel);
 
       const updatedChannel = response.data.data.updatedChannel;
 

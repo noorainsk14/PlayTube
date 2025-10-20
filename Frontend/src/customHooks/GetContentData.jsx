@@ -17,7 +17,7 @@ const GetContentData = () => {
         });
         dispatch(setVideoData(result.data?.data?.videos));
       } catch (error) {
-        console.log(error.response?.data?.message);
+        //console.log(error.response?.data?.message);
         dispatch(setVideoData(null));
       }
     };
@@ -30,10 +30,10 @@ const GetContentData = () => {
         const result = await axios.get(`${serverUrl}/api/v1/short/get-shorts`, {
           withCredentials: true,
         });
-        console.log(result?.data?.data?.shorts);
+        //console.log(result?.data?.data?.shorts);
         dispatch(setShortData(result.data?.data?.shorts));
       } catch (error) {
-        console.log(error.response?.data?.message);
+        //console.log(error.response?.data?.message);
         dispatch(setShortData(null));
       }
     };

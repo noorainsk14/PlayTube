@@ -104,13 +104,13 @@ const SignUp = () => {
 
     //formData.append("coverImage", coverImage);
     try {
-      console.log("Sending file:", backendImage);
+      //console.log("Sending file:", backendImage);
       const result = await axios.post(
         `${serverUrl}/api/v1/users/register`,
         formData,
         { withCredentials: true }
       );
-      console.log(result.data.data);
+      //console.log(result.data.data);
       dispatch(setUserData(result.data.data));
 
       showSuccessToast("SignUp Successfull !");

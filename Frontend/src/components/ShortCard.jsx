@@ -16,7 +16,7 @@ const ShortCard = ({ shortUrl, title, channelName, avatar, views, id }) => {
           muted
           playsInline
           onContextMenu={(e) => e.preventDefault}
-          preload="metadata"
+          preload="none"
         ></video>
       </div>
       <div className="mt-2 space-y-2 w-full absolute bottom-0 p-3 bg-[#000000b6] rounded-xl">

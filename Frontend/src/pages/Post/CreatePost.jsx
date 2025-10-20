@@ -36,7 +36,7 @@ const CreatePost = () => {
         { withCredentials: true }
       );
 
-      console.log(result.data?.data?.post);
+      //console.log(result.data?.data?.post);
       const updateChannel = {
         ...channelData,
         post: [...(channelData.post || []), result.data?.data?.post],

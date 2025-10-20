@@ -79,9 +79,9 @@ const SignIn = () => {
           withCredentials: true,
         }
       );
-      console.log(result.data.data);
+      //console.log(result.data?.data?.user);
 
-      dispatch(setUserData(result.data.data));
+      dispatch(setUserData(result.data?.data?.user));
       showSuccessToast("Login successful! ");
       navigate("/");
     } catch (err) {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import logo from "../../assets/play_13955998.png";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import StepOne from "../../components/CreateChannelCompo/StepOne";
 import StepTwo from "../../components/CreateChannelCompo/StepTwo";
 import StepThree from "../../components/CreateChannelCompo/StepThree";
@@ -8,6 +8,7 @@ import axios from "axios";
 import { serverUrl } from "../../App";
 import { showErrorToast, showSuccessToast } from "../../helper/toastHelper";
 import { useNavigate } from "react-router-dom";
+import { setChannelData } from "../../redux/userSlice";
 
 const CreateChannel = () => {
   const { userData } = useSelector((state) => state.user);
@@ -19,6 +20,7 @@ const CreateChannel = () => {
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleAvatar = (e) => {
     setAvatar(e.target.files[0]);
@@ -45,12 +47,14 @@ const CreateChannel = () => {
         formData,
         { withCredentials: true }
       );
-      console.log(result);
+      //console.log(result);
       setLoading(false);
       showSuccessToast(result.data?.message || "Channel created successfully!");
+      dispatch(setChannelData(result.data?.data));
       navigate("/view-channel");
     } catch (error) {
       console.log(error);
+      dispatch(setChannelData(null));
       setLoading(false);
 
       const message = error?.response?.data?.message || "Something went wrong";
@@ -62,7 +66,7 @@ const CreateChannel = () => {
   return (
     <div className=" min-h-screen bg-[#0f0f0f] text-white flex flex-col">
       <header className="flex justify-between items-center px-6 py-3 border-b border-gray-800">
-        <div className="flex items-center gap-2">
+        <div onClick={() => navigate("/")} className="flex items-center gap-2">
           <img src={logo} alt="logo" className="w-8 h-8 object-cover" />
           <span className="text-white font-bold text-xl tracking-tight font-roboto">
             PlayTube

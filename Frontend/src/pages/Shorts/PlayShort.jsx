@@ -34,7 +34,7 @@ const PlayShort = () => {
   const [shortList, setShortList] = useState([]);
   const shortRef = useRef([]);
   const [playIndex, setPlayIndex] = useState(null);
-  const [openComment, setOpenComment] = useState(false);
+  const [openComment, setOpenComment] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
@@ -79,7 +79,7 @@ const PlayShort = () => {
           if (video) {
             if (entry.isIntersecting) {
               (video.muted = false), video.play();
-              setActiveIndex(index);
+              setActiveIndex(index), setOpenComment(null);
               const currentShortId = shortList[index]._id;
               if (!viewedShort.includes(currentShortId)) {
                 handleAddView(currentShortId);
@@ -126,7 +126,7 @@ const PlayShort = () => {
         { channelId },
         { withCredentials: true }
       );
-      console.log(result.data);
+      //console.log(result.data);
       const updatedChannel = result.data?.data?.updatedChannel;
       setShortList((prev) =>
         prev.map((short) =>
@@ -151,7 +151,7 @@ const PlayShort = () => {
         {},
         { withCredentials: true }
       );
-      console.log(result.data?.data?.short);
+      //console.log(result.data?.data?.short);
       const updatedShort = result.data?.data?.short;
       setShortList((prev) =>
         prev.map((short) =>
@@ -170,7 +170,7 @@ const PlayShort = () => {
         {},
         { withCredentials: true }
       );
-      console.log(result.data?.data?.short);
+      //console.log(result.data?.data?.short);
       const updatedShort = result.data?.data?.short;
       setShortList((prev) =>
         prev.map((short) =>
@@ -189,7 +189,8 @@ const PlayShort = () => {
         {},
         { withCredentials: true }
       );
-      console.log(result.data?.data?.short);
+      //console.log(result.data?.data?.short);
+
       const updatedShort = result.data?.data?.short;
       setShortList((prev) =>
         prev.map((short) =>
@@ -224,7 +225,7 @@ const PlayShort = () => {
         { message: newComment },
         { withCredentials: true }
       );
-      console.log(result.data?.data?.short?.comments);
+      //console.log(result.data?.data?.short?.comments);
       setComment((prev) => ({
         ...prev,
         [shortId]: result.data?.data?.short?.comments || [],
@@ -252,7 +253,7 @@ const PlayShort = () => {
         { message: replyText },
         { withCredentials: true }
       );
-      console.log(result.data?.data?.short?.comments);
+      //console.log(result.data?.data?.short?.comments);
 
       setComment((prev) => ({
         ...prev,
@@ -283,7 +284,7 @@ const PlayShort = () => {
           { contentId: shortId, contentType: "Short" },
           { withCredentials: true }
         );
-        console.log(result.data?.data);
+        //console.log(result.data?.data);
       } catch (error) {
         console.log("error adding history:", error);
       }
@@ -407,7 +408,9 @@ const PlayShort = () => {
                   icon={FaComment}
                   label={"Comment"}
                   onClick={() => {
-                    setOpenComment(!openComment);
+                    setOpenComment(
+                      openComment === short._id ? null : short._id
+                    );
                     setComment((prev) => ({
                       ...prev,
                       [short._id]: short.comments,
@@ -435,7 +438,7 @@ const PlayShort = () => {
                 />
               </div>
             </div>
-            {openComment && (
+            {openComment === short._id && (
               <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-black/95 text-white p-4 rounded-t-2xl overflow-y-auto">
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="font-bold text-lg">Comments</h3>
@@ -443,7 +446,7 @@ const PlayShort = () => {
                     <FaArrowDown
                       size={20}
                       onClick={() => {
-                        setOpenComment(!openComment);
+                        setOpenComment(setOpenComment(null));
                       }}
                     />
                   </button>

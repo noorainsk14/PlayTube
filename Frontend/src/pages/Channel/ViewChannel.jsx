@@ -10,7 +10,6 @@ const ViewChannel = () => {
     <div className="flex flex-col gap-3">
       {/* coverImage */}
       <div className="w-full h-50 bg-gray-700 relative mb-10 mt-10 rounded-lg border-1 border-gray-500">
-        {console.log(channelData?.coverImage)}
         {channelData?.coverImage ? (
           <img
             src={channelData?.coverImage}

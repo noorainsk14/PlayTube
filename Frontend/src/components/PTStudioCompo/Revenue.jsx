@@ -27,7 +27,6 @@ const calculationRevenue = (views, type) => {
 
 const Revenue = () => {
   const { channelData } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
   const [contentRevenue, setContentRevenue] = useState(null);
 
   if (!channelData) {

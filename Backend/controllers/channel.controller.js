@@ -11,7 +11,7 @@ import { Playlist } from "../models/Playlist.model.js";
 const createChannel = asyncHandler(async (req, res) => {
   const { name, description, category } = req.body;
   const userId = req.user?._id || req.userId;
-  console.log("Creating channel for userId:", req.userId);
+  //console.log("Creating channel for userId:", req.userId);
 
   const existingChannel = await Channel.findOne({ owner: userId });
   if (existingChannel) {

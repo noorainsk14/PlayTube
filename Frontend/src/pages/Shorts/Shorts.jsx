@@ -53,7 +53,7 @@ const Shorts = () => {
           if (video) {
             if (entry.isIntersecting) {
               (video.muted = false), video.play();
-              setActiveIndex(index);
+              setActiveIndex(index), setOpenComment(false);
               const currentShortId = shortList[index]._id;
               if (!viewedShort.includes(currentShortId)) {
                 handleAddView(currentShortId);
@@ -100,7 +100,7 @@ const Shorts = () => {
         { channelId },
         { withCredentials: true }
       );
-      console.log(result.data);
+      //console.log(result.data);
       const updatedChannel = result.data?.data?.updatedChannel;
       setShortList((prev) =>
         prev.map((short) =>
@@ -125,7 +125,7 @@ const Shorts = () => {
         {},
         { withCredentials: true }
       );
-      console.log(result.data?.data?.short);
+      //console.log(result.data?.data?.short);
       const updatedShort = result.data?.data?.short;
       setShortList((prev) =>
         prev.map((short) =>
@@ -144,7 +144,7 @@ const Shorts = () => {
         {},
         { withCredentials: true }
       );
-      console.log(result.data?.data?.short);
+      //console.log(result.data?.data?.short);
       const updatedShort = result.data?.data?.short;
       setShortList((prev) =>
         prev.map((short) =>
@@ -163,7 +163,7 @@ const Shorts = () => {
         {},
         { withCredentials: true }
       );
-      console.log(result.data?.data?.short);
+      //console.log(result.data?.data?.short);
       const updatedShort = result.data?.data?.short;
       setShortList((prev) =>
         prev.map((short) =>
@@ -198,7 +198,7 @@ const Shorts = () => {
         { message: newComment },
         { withCredentials: true }
       );
-      console.log(result.data?.data?.short?.comments);
+      //console.log(result.data?.data?.short?.comments);
       setComment((prev) => ({
         ...prev,
         [shortId]: result.data?.data?.short?.comments || [],
@@ -226,7 +226,7 @@ const Shorts = () => {
         { message: replyText },
         { withCredentials: true }
       );
-      console.log(result.data?.data?.short?.comments);
+      //console.log(result.data?.data?.short?.comments);
 
       setComment((prev) => ({
         ...prev,
@@ -253,7 +253,6 @@ const Shorts = () => {
 
     const shuffled = [...shortData].sort(() => Math.random() - 0.5);
     setShortList(shuffled);
-    //console.log(shuffled);
   }, [shortData]);
 
   useEffect(() => {
@@ -267,7 +266,7 @@ const Shorts = () => {
           { contentId: shortId, contentType: "Short" },
           { withCredentials: true }
         );
-        console.log(result.data?.data);
+        //console.log(result.data?.data);
       } catch (error) {
         console.log("error adding history:", error);
       }
@@ -284,7 +283,7 @@ const Shorts = () => {
           className="min-h-screen w-full flex md:items-center  items-start justify-center snap-start pt-[40px] md:pt-0"
         >
           <div
-            className="relative w-[420px] md:w-[350px] aspect-[9/16] bg-black rounded-2xl mt-[120px] md:mt-[0px] overflow-hidden shadow-xl  border border-gray-700 cursor-pointer"
+            className="relative w-[420px] md:w-[350px] aspect-[9/16] bg-black rounded-2xl mt-[50px] md:mt-[0px] overflow-hidden shadow-xl  border border-gray-700 cursor-pointer"
             onClick={() => {
               togglePlay(index);
             }}
@@ -368,7 +367,7 @@ const Shorts = () => {
                 <Description text={short?.description} />
               </div>
 
-              <div className="absolute right-3 bottom-28 flex flex-col items-center gap-5 text-white">
+              <div className="absolute right-3 bottom-40 flex flex-col items-center gap-5 text-white">
                 <IconButton
                   icon={FaThumbsUp}
                   label={"Likes"}

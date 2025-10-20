@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { serverUrl } from "../../App";
-import axios from "axios";
 import { SiYoutubeshorts } from "react-icons/si";
 import ShortCard from "../../components/ShortCard";
 import { GoVideo } from "react-icons/go";

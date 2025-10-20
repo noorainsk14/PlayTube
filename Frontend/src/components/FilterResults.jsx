@@ -47,7 +47,7 @@ const FilterResults = ({ filterResults }) => {
       className="px-6 bg-[#00000051] border-1
      border-gray-800 mb-[20px] p-10"
     >
-      <h2 className="text-2xl font-bold mb-4 ">Filter Results</h2>
+      <h2 className="text-2xl font-bold mt-4 mb-4 ">Filter Results</h2>
       {isEmpty ? (
         <p className="text-gray-400 text-lg">No Results found</p>
       ) : (

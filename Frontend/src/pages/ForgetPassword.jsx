@@ -25,7 +25,7 @@ const ForgetPassword = () => {
         { email },
         { withCredentials: true }
       );
-      console.log(result);
+      //console.log(result);
       setStep(2);
       setLoading(false);
       showSuccessToast(result.data.data);
@@ -44,7 +44,7 @@ const ForgetPassword = () => {
         { email, otp },
         { withCredentials: true }
       );
-      console.log(result);
+      // console.log(result);
       setStep(3);
       setLoading(false);
       showSuccessToast(result.data.data);
@@ -67,7 +67,7 @@ const ForgetPassword = () => {
         { email, password: newPass },
         { withCredentials: true }
       );
-      console.log(result);
+      //console.log(result);
       setLoading(false);
       showSuccessToast(result.data.data);
       navigate("/sign-in");

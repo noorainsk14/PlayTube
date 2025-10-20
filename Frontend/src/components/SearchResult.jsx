@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ChannelCard from "./ChannelCard";
 import VideoCard from "./VideoCard";
-import { createSelector } from "@reduxjs/toolkit";
 import PlaylistCard from "./PlaylistCard";
 import ShortCard from "./ShortCard";
 
@@ -47,7 +46,7 @@ const SearchResults = ({ searchResults }) => {
       className="px-6 bg-[#00000051] border-1
      border-gray-800 mb-[20px]"
     >
-      <h2 className="text-2xl font-bold mb-4">Search Results</h2>
+      <h2 className="text-2xl font-bold mt-4 mb-4">Search Results</h2>
       {isEmpty ? (
         <p className="text-gray-400 text-lg">No Results found</p>
       ) : (
@@ -76,6 +75,7 @@ const SearchResults = ({ searchResults }) => {
               <div className="flex flex-wrap gap-6 mb-12">
                 {searchResults.videos.map((video) => (
                   <VideoCard
+                    key={video?._id}
                     thumbnail={video?.thumbnail}
                     duration={duration[video._id] || "0:00"}
                     channelLogo={video?.channel?.avatar}
@@ -97,6 +97,7 @@ const SearchResults = ({ searchResults }) => {
                 {searchResults.shorts.map((short) => (
                   <div key={short?._id} className="flex-shrink-0">
                     <ShortCard
+                      key={short?._id}
                       shortUrl={short?.shortUrl}
                       title={short?.title}
                       channelName={short?.channel?.name}

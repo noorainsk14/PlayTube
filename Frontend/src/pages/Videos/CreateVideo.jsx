@@ -45,7 +45,7 @@ const CreateVideo = () => {
         { withCredentials: true }
       );
       const response = result.data.data.newVideo;
-      console.log(response);
+      // console.log(response);
       showSuccessToast("Video Uploaded Successfully");
       navigate("/");
       dispatch(setVideoData([...videoData, response]));

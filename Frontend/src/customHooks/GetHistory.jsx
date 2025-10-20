@@ -14,7 +14,7 @@ const GetHistory = () => {
           `${serverUrl}/api/v1/channel/get-history`,
           { withCredentials: true }
         );
-        console.log(result?.data?.data?.sortedHistory);
+        //console.log(result?.data?.data?.sortedHistory);
         const history = result?.data?.data?.sortedHistory;
         const Videos = history.filter((v) => v.contentType === "Video");
 
@@ -22,9 +22,9 @@ const GetHistory = () => {
 
         dispatch(SetVideoHistory(Videos));
         dispatch(SetShortHistory(Shorts));
-        console.log(Videos, Shorts);
+        //console.log(Videos, Shorts);
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         dispatch(SetVideoHistory(null));
         dispatch(SetShortHistory(null));
       }

@@ -87,7 +87,7 @@ const Subscriptions = () => {
         <>
           <h2 className="text-2xl font-bold mb-6 border-b border-gray-300 pb-2 flex items-center gap-2">
             <SiYoutubeshorts className="w-7 h-7 text-red-600" />
-            Subscribe Shorts
+            Shorts
           </h2>
 
           <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
@@ -111,7 +111,7 @@ const Subscriptions = () => {
         <>
           <h2 className="text-2xl font-bold mb-6 pt-[50px] border-b border-gray-300 pb-2 flex items-center gap-2">
             <GoVideo className="w-7 h-7 text-red-600" />
-            Liked Videos
+            Videos
           </h2>
 
           <div className="flex flex-wrap gap-6">
@@ -136,7 +136,7 @@ const Subscriptions = () => {
         <>
           <h2 className="text-2xl font-bold mb-6 pt-[50px] border-b border-gray-300 pb-2 flex items-center gap-2">
             <FaList className="w-7 h-7 text-red-600" />
-            Saved Plalist
+            Playlist
           </h2>
           <div className="flex flex-wrap gap-6">
             {subscribedPlaylists?.map((pl) => (

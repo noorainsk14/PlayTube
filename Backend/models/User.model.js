@@ -35,9 +35,7 @@ const userSchema = new Schema(
       required: true,
     },
 
-    // coverImage: {
-    //   type: String,
-    // },
+    
 
     channel: {
       type: mongoose.Schema.Types.ObjectId,
@@ -96,7 +94,6 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 };
 
 userSchema.methods.generateAccessToken = function () {
-  console.log("Generating token for user:", this._id);
   return jwt.sign(
     {
       _id: this._id.toString(),

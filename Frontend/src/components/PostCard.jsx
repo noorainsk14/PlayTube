@@ -17,7 +17,7 @@ const PostCard = ({ post }) => {
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
 
-  console.log(post);
+  //console.log(post);
 
   const handleLike = async () => {
     try {
@@ -26,7 +26,7 @@ const PostCard = ({ post }) => {
         { postId: post?._id },
         { withCredentials: true }
       );
-      console.log(result.data?.data?.post?.likes);
+      //console.log(result.data?.data?.post?.likes);
       setLikeCount(result.data?.data?.post?.likes.length);
       setLiked(result.data?.data?.post?.likes.includes(userData?._id));
     } catch (error) {
@@ -47,7 +47,7 @@ const PostCard = ({ post }) => {
         { withCredentials: true }
       );
 
-      console.log(result.data?.data?.post?.comments);
+      //console.log(result.data?.data?.post?.comments);
       setComments((prev) => [
         result.data?.data?.post?.comments?.slice(-1)[0],
         ...prev,
@@ -76,7 +76,7 @@ const PostCard = ({ post }) => {
         { withCredentials: true }
       );
 
-      console.log(result.data?.data?.populatedPost?.comments);
+      //console.log(result.data?.data?.populatedPost?.comments);
       setComments(result.data?.data?.populatedPost?.comments);
       showSuccessToast("Reply sent !");
     } catch (error) {

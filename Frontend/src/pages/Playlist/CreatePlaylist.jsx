@@ -15,7 +15,6 @@ const CreatePlaylist = () => {
   const { channelData } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  //const { videoData } = useSelector((state) => state.content);
 
   useEffect(() => {
     if (channelData || channelData.videos) {
@@ -50,7 +49,7 @@ const CreatePlaylist = () => {
         { withCredentials: true }
       );
 
-      console.log(result.data?.data?.playlist);
+      //console.log(result.data?.data?.playlist);
       const updateChannel = {
         ...channelData,
         playlists: [

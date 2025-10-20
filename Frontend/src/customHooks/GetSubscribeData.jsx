@@ -26,9 +26,9 @@ const GetSubscribeData = () => {
         dispatch(setSubscribedShorts(result.data?.data?.shorts));
         dispatch(setSubscribedPlaylists(result.data?.data?.playlist));
         dispatch(setSubscribedPosts(result.data?.data?.Post));
-        console.log(result.data?.data);
+        //console.log(result.data?.data);
       } catch (error) {
-        console.log(error);
+        //console.log(error);
       }
     };
 

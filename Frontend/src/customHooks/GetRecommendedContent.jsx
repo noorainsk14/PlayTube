@@ -15,9 +15,9 @@ const GetRecommendedContent = () => {
           { withCredentials: true }
         );
         dispatch(SetRecommendedContent(result.data?.data));
-        console.log("✅ Recommended content:", result.data?.data);
+        //console.log("✅ Recommended content:", result.data?.data);
       } catch (error) {
-        console.error("❌ Error fetching recommendations:", error);
+        // console.error(" Error fetching recommendations:", error);
         dispatch(SetRecommendedContent(null)); // ✅ dispatch instead of direct call
       }
     };
