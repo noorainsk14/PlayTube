@@ -1,11 +1,10 @@
 import nodemailer from "nodemailer";
 import "dotenv/config";
 
-// Create a test account or replace with real credentials.
 const transporter = nodemailer.createTransport({
-  service: "gmail",
-  port: 465,
-  secure: false, // true for 465, false for other ports
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, // false = use STARTTLS
   auth: {
     user: process.env.APP_USER,
     pass: process.env.APP_PASSWORD,
@@ -14,10 +13,10 @@ const transporter = nodemailer.createTransport({
 
 const sendMail = async (to, otp) => {
   await transporter.sendMail({
-    from: process.env.APP_USER,
-    to: to,
+    from: `"PlayTube" <${process.env.APP_USER}>`,
+    to,
     subject: "Reset Your Password",
-    html: `<p>Your OTP for Password Reset is <b>${otp}<b/> It expires in o5 minutes.</p>`, // HTML body
+    html: `<p>Your OTP for Password Reset is <b>${otp}</b>. It expires in 5 minutes.</p>`,
   });
 };
 
