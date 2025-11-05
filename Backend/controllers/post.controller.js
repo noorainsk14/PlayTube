@@ -5,43 +5,40 @@ import { Channel } from "../models/Channel.model.js";
 import { Video } from "../models/Video.model.js";
 import { Playlist } from "../models/Playlist.model.js";
 import { Post } from "../models/Post.model.js";
-import { uploadOnCloudinary } from "../config/cloudinary.js";
+import { uploadOnCloudinaryFromBuffer } from "../config/cloudinary.js";
 import mongoose from "mongoose";
 
 
-const createPost = asyncHandler(async(req, res) => {
-    const {ChannelId, content} = req.body
-    const file = req.file
+const createPost = asyncHandler(async (req, res) => {
+  const { ChannelId, content } = req.body;
+  const file = req.file;
 
-    if(!ChannelId || !content){
-        throw new ApiError(400, "ChannelId and content are required")
-    }
+  if (!ChannelId || !content) {
+    throw new ApiError(400, "ChannelId and content are required");
+  }
 
-    let imageUrl = null
+  let imageUrl = null;
 
-    if(file){
-        imageUrl = await uploadOnCloudinary(file.path)
-        imageUrl = imageUrl.secure_url
+  if (file) {
+    // ✅ Upload using buffer instead of file path
+    const uploadedImage = await uploadOnCloudinaryFromBuffer(file.buffer);
+    imageUrl = uploadedImage.secure_url;
+  }
 
-    }
+  const post = await Post.create({
+    channel: ChannelId,
+    content,
+    image: imageUrl,
+  });
 
-    const post = await Post.create({
-        channel:ChannelId,
-        content,
-        image:imageUrl
+  await Channel.findByIdAndUpdate(ChannelId, {
+    $push: { communityPost: post._id },
+  });
 
-    })
-
-    await Channel.findByIdAndUpdate(ChannelId, {
-        $push:{communityPost: post._id}
-    })
-
-
-
-    return res.status(201).json(
-        new ApiResponse(201, {post}, "Post created Successfull !")
-    )
-})
+  return res
+    .status(201)
+    .json(new ApiResponse(201, { post }, "Post created successfully!"));
+});
 
 const getAllPost = asyncHandler(async (req, res) => {
   const posts = await Post.find().sort({ createdAt: -1 }).populate("channel comments.author comments.replies.author");
