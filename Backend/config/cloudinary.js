@@ -1,5 +1,4 @@
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -7,32 +6,19 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadOnCloudinary = async (filePathOrUrl) => {
+export const uploadOnCloudinary = async (fileBuffer) => {
   try {
-    if (!filePathOrUrl) return null;
-
-    const isRemoteUrl = filePathOrUrl.startsWith("http");
-
-    const response = await cloudinary.uploader.upload(filePathOrUrl, {
-      resource_type: "auto",
-    });
-
-    if (!isRemoteUrl && fs.existsSync(filePathOrUrl)) {
-      fs.unlinkSync(filePathOrUrl);
-    }
+    const response = await cloudinary.uploader.upload_stream(
+      { resource_type: "auto" },
+      (error, result) => {
+        if (error) throw error;
+        return result;
+      }
+    ).end(fileBuffer);
 
     return response;
-  } catch (error) {
-    console.error("❌ Cloudinary Upload Error:", error);
-
-    const isRemoteUrl = filePathOrUrl.startsWith("http");
-
-    if (!isRemoteUrl && fs.existsSync(filePathOrUrl)) {
-      fs.unlinkSync(filePathOrUrl);
-    }
-
+  } catch (err) {
+    console.error("Cloudinary Upload Error:", err);
     return null;
   }
 };
-
-export { uploadOnCloudinary };
