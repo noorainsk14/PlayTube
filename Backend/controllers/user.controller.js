@@ -34,7 +34,7 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
 const registerUser = asyncHandler(async (req, res) => {
   const { fullName, email, username, password } = req.body;
 
-  // ✅ Normalize email
+  // Normalize email
   const normalizedEmail = email?.toLowerCase().trim();
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -65,23 +65,24 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "User with this email or username already exists");
   }
 
-  // ✅ Use req.file.buffer instead of local path
+  // Multer memory storage provides the file in req.file.buffer
   const avatarFile = req.file;
   if (!avatarFile) {
     throw new ApiError(400, "Avatar file is required");
   }
 
-  const avatar = await uploadOnCloudinary(avatarFile.buffer); // pass buffer directly
-  if (!avatar) {
+  // Upload to Cloudinary from buffer
+  const avatar = await uploadOnCloudinaryFromBuffer(avatarFile.buffer);
+  if (!avatar?.secure_url) {
     throw new ApiError(500, "Failed to upload Avatar");
   }
 
   const user = await User.create({
     fullName,
-    avatar: avatar.secure_url || avatar.url, // Cloudinary url
+    username: username.toLowerCase().trim(),
     email: normalizedEmail,
     password,
-    username: username.toLowerCase().trim(),
+    avatar: avatar.secure_url, // store HTTPS URL directly
   });
 
   const createdUser = await User.findById(user._id).select(
