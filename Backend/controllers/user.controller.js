@@ -2,11 +2,9 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/User.model.js";
-import { uploadOnCloudinary } from "../config/cloudinary.js";
+import { uploadOnCloudinaryFromBuffer } from "../config/cloudinary.js";
 import { sendMail } from "../config/sendMail.js";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
-import { Channel } from "../models/Channel.model.js";
 import { Video } from "../models/Video.model.js";
 import { Short } from "../models/Short.model.js";
 
