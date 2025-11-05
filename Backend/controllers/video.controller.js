@@ -4,7 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/User.model.js";
 import { Video } from "../models/Video.model.js";
 import { Channel } from "../models/Channel.model.js";
-import { uploadOnCloudinary } from "../config/cloudinary.js";
+import { uploadOnCloudinaryFromBuffer } from "../config/cloudinary.js";
 import mongoose from "mongoose";
 
 const createVideo = asyncHandler(async (req, res) => {
@@ -23,11 +23,12 @@ const createVideo = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Channel not found !!");
   }
 
-  const uploadVideo = await uploadOnCloudinary(req.files.video[0].path);
-  const video = uploadVideo?.secure_url;
+  const uploadVideo = await uploadOnCloudinaryFromBuffer(req.files.video[0].buffer);
+const video = uploadVideo?.secure_url;
 
-  const uploadThumbnail = await uploadOnCloudinary(req.files.thumbnail[0].path);
-  const thumbnail = uploadThumbnail?.secure_url;
+const uploadThumbnail = await uploadOnCloudinaryFromBuffer(req.files.thumbnail[0].buffer);
+const thumbnail = uploadThumbnail?.secure_url;
+
 
   let parsedTag = [];
   if (tags) {
@@ -366,10 +367,11 @@ const updateVideo = asyncHandler(async(req, res) => {
     }
   }
 
-  if(req.file){
-      const uploadedThumbnail = await uploadOnCloudinary(req.file.path)
-      video.thumbnail = uploadedThumbnail.secure_url
-  }
+ if (req.file) {
+  const uploadedThumbnail = await uploadOnCloudinaryFromBuffer(req.file.buffer);
+  video.thumbnail = uploadedThumbnail.secure_url;
+}
+
 
   await video.save();
  
