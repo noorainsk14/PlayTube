@@ -5,13 +5,12 @@ import { User } from "../models/User.model.js";
 import { Video } from "../models/Video.model.js";
 import { Short } from "../models/Short.model.js";
 import { Channel } from "../models/Channel.model.js";
-import { uploadOnCloudinary } from "../config/cloudinary.js";
+import { uploadOnCloudinaryFromBuffer } from "../config/cloudinary.js";
 import { Playlist } from "../models/Playlist.model.js";
 
 const createChannel = asyncHandler(async (req, res) => {
   const { name, description, category } = req.body;
   const userId = req.user?._id || req.userId;
-  //console.log("Creating channel for userId:", req.userId);
 
   const existingChannel = await Channel.findOne({ owner: userId });
   if (existingChannel) {
@@ -23,18 +22,15 @@ const createChannel = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Channel name already taken");
   }
 
-  let avatar;
-  let coverImage;
+  let avatar, coverImage;
 
-  if (req.files?.avatar) {
-    const uploadedAvatar = await uploadOnCloudinary(req.files.avatar[0].path);
-    avatar = uploadedAvatar?.secure_url; // ✅ extract only the URL
+  if (req.files?.avatar?.[0]) {
+    const uploadedAvatar = await uploadOnCloudinaryFromBuffer(req.files.avatar[0].buffer);
+    avatar = uploadedAvatar?.secure_url;
   }
 
-  if (req.files?.coverImage) {
-    const uploadedCoverImage = await uploadOnCloudinary(
-      req.files.coverImage[0].path
-    );
+  if (req.files?.coverImage?.[0]) {
+    const uploadedCoverImage = await uploadOnCloudinaryFromBuffer(req.files.coverImage[0].buffer);
     coverImage = uploadedCoverImage?.secure_url;
   }
 
@@ -111,22 +107,17 @@ const updateChannel = asyncHandler(async (req, res) => {
     channel.name = name;
   }
 
-  if (description !== undefined) {
-    channel.description = description;
+  if (description !== undefined) channel.description = description;
+  if (category !== undefined) channel.category = category;
+
+  if (req.files?.avatar?.[0]) {
+    const uploadedAvatar = await uploadOnCloudinaryFromBuffer(req.files.avatar[0].buffer);
+    channel.avatar = uploadedAvatar?.secure_url;
   }
 
-  if (category !== undefined) {
-    channel.category = category;
-  }
-
-  if (req.files?.avatar) {
-    const avatar = await uploadOnCloudinary(req.files.avatar[0].path);
-    channel.avatar = avatar?.secure_url;
-  }
-
-  if (req.files?.coverImage) {
-    const coverImage = await uploadOnCloudinary(req.files.coverImage[0].path);
-    channel.coverImage = coverImage?.secure_url;
+  if (req.files?.coverImage?.[0]) {
+    const uploadedCoverImage = await uploadOnCloudinaryFromBuffer(req.files.coverImage[0].buffer);
+    channel.coverImage = uploadedCoverImage?.secure_url;
   }
 
   const updatedChannel = await channel.save();
@@ -141,13 +132,7 @@ const updateChannel = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        { updatedChannel },
-        "Channel updated successfully !!"
-      )
-    );
+    .json(new ApiResponse(200, { updatedChannel }, "Channel updated successfully !!"));
 });
 
 const toggleSubscribe = asyncHandler(async (req, res) => {
