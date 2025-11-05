@@ -104,18 +104,18 @@ const logIn = asyncHandler(async (req, res) => {
     throw new ApiError(404, "username or email are required");
   }
 
-  // ✅ Normalize email if provided
+  // Normalize email and username
   const normalizedEmail = email?.toLowerCase().trim();
 
   const user = await User.findOne({
     $or: [
-      { username: username?.toLowerCase().trim() }, // ✅ lowercase username
+      { username: username?.toLowerCase().trim() },
       { email: normalizedEmail },
     ],
   });
 
   if (!user) {
-    throw new ApiError(401, "User is not existed with this email or password");
+    throw new ApiError(401, "User does not exist with this email or username");
   }
 
   const validPassword = await user.isPasswordCorrect(password);
@@ -124,6 +124,7 @@ const logIn = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Invalid password");
   }
 
+  // Generate tokens
   const { accessToken, refreshToken } =
     await generateAccessTokenAndRefreshToken(user._id);
 
@@ -131,16 +132,18 @@ const logIn = asyncHandler(async (req, res) => {
     "-password -refreshToken"
   );
 
-  const options = {
+  // ✅ Unified cookie options
+  const cookieOptions = {
     httpOnly: true,
-    secure: true,
-    sameSite: "None",
+    secure: process.env.NODE_ENV === "production", // only secure in production
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
   };
 
   return res
     .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
+    .cookie("accessToken", accessToken, cookieOptions)
+    .cookie("refreshToken", refreshToken, cookieOptions)
     .json(
       new ApiResponse(
         200,
@@ -149,35 +152,35 @@ const logIn = asyncHandler(async (req, res) => {
           accessToken,
           refreshToken,
         },
-        "User loggin successfully"
+        "User logged in successfully"
       )
     );
 });
 
 const logOut = asyncHandler(async (req, res) => {
-  await User.findByIdAndUpdate(
-    req.user._id,
-    {
-      $unset: {
-        refreshToken: 1,
-      },
-    },
-    {
-      new: true,
-    }
-  );
+  // Remove refreshToken from DB
+  if (req.user?._id) {
+    await User.findByIdAndUpdate(
+      req.user._id,
+      { $unset: { refreshToken: 1 } },
+      { new: true }
+    );
+  }
 
-  const options = {
+  // ✅ Use same cookie options as login for clearing
+  const cookieOptions = {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
   };
 
   return res
     .status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
-    .json(new ApiResponse(200, {}, "User logged Out"));
+    .clearCookie("accessToken", cookieOptions)
+    .clearCookie("refreshToken", cookieOptions)
+    .json(new ApiResponse(200, {}, "User logged out successfully"));
 });
+
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
   const incomingRefreshToken =
